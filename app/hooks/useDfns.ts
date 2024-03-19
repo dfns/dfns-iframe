@@ -21,20 +21,21 @@ const WINDOW_H = 400;
 
 type MessageWindowOptions = "iframe" | "popup";
 export enum MessageActions {
-  createWallet = "createWallet",
-  listWallets = "listWallets",
-  doCreateWalletSignature = "doCreateWalletSignature",
-  signWalletSignature = "signWalletSignature",
-  getAuthToken = "getAuthToken",
   startAuth = "startAuth",
   registerAuth = "registerAuth",
+  createWallet = "createWallet",
+  listWallets = "listWallets",
+  signWalletTransaction = "signWalletTransaction",
+  signWalletSignature = "signWalletSignature",
+  getAuthToken = "getAuthToken",
+  createUserRegistration = "createUserRegistration",
   logout = "logout",
-  sign = "sign",
+  requestUserSignature = "requestUserSignature",
   updateIframeScreenState = "updateIframeScreenState",
 }
 export type MessagePayload = {
   action: MessageActions;
-  IframeActiveState: IframeActiveState;
+  IframeActiveState?: IframeActiveState;
   userName?: string;
   challenge?:
     | UserRegistrationChallenge
@@ -49,7 +50,7 @@ export type MessagePayload = {
   transaction?: {};
   kind?: string;
 };
-enum MessageActionsResponses {
+export enum MessageActionsResponses {
   authToken = "authToken",
   actionError = "actionError",
   attestation = "attestation",
@@ -58,6 +59,8 @@ enum MessageActionsResponses {
   registered = "registered",
   walletCreated = "walletCreated",
   walletsList = "walletsList",
+  initCreateUserAndWallet = "initCreateUserAndWallet",
+  signedChallenge = "signedChallenge",
 }
 export enum IframeActiveState {
   default = "default",
@@ -70,11 +73,13 @@ interface DfnsProps {
   iframeRef?: MutableRefObject<HTMLIFrameElement | null | undefined>;
   userName?: string;
   initialInterfaceState?: IframeActiveState;
+  onReceiveDfnsMessage?: (event: MessageEvent) => void;
 }
 export const useDfns = ({
   userName,
   iframeRef,
   initialInterfaceState = IframeActiveState.default,
+  onReceiveDfnsMessage,
 }: DfnsProps) => {
   const popupRef = useRef<Window | null>(null);
   const intervalId = useRef<number>(0);
@@ -86,7 +91,7 @@ export const useDfns = ({
     initialInterfaceState
   );
   const [userWallets, setUserWallets] = useState();
-  const [messageErrors, setMessagErrors] = useState("false");
+  const [messageErrors, setMessageErrors] = useState("");
 
   const [userAuthToken, setUserAuthToken] = useState("");
   const [messageTarget] = useState<MessageWindowOptions>("iframe");
@@ -127,6 +132,7 @@ export const useDfns = ({
   }, [sendMessageToDfns, iframeScreen]);
 
   const login = () => {
+    console.log("do login");
     sendMessageToDfns({
       action: MessageActions.startAuth,
       userName,
@@ -137,11 +143,28 @@ export const useDfns = ({
     sendMessageToDfns({ action: MessageActions.logout } as MessagePayload);
   };
 
-  const sign = (challenge: UserRegistrationChallenge) => {
+  const registerUser = (userName, challenge) => {
     sendMessageToDfns({
-      action: MessageActions.sign,
+      action: MessageActions.registerAuth,
+      userName,
       challenge,
     } as MessagePayload);
+  };
+
+  const sign = (challenge: UserRegistrationChallenge) => {
+    sendMessageToDfns({
+      action: MessageActions.createUserRegistration,
+      challenge,
+    } as MessagePayload);
+  };
+
+  const signTransaction = (walletId, transaction, kind) => {
+    sendMessageToDfns({
+      action: MessageActions.signWalletTransaction,
+      walletId,
+      transaction,
+      kind,
+    });
   };
 
   const onIframeLoaded = (
@@ -182,6 +205,7 @@ export const useDfns = ({
   };
 
   const handleReceivedWindowMessages = async (event: MessageEvent) => {
+    // console.log("all messages", event);
     if (!IFRAME_URL.includes(event.origin)) {
       return;
     }
@@ -192,6 +216,9 @@ export const useDfns = ({
     }
 
     isMessageReplied.current = true;
+
+    // hook into all messages
+    if (onReceiveDfnsMessage) onReceiveDfnsMessage(event);
 
     switch (action) {
       case MessageActionsResponses.authToken:
@@ -209,7 +236,7 @@ export const useDfns = ({
         setUserWallets(event.data.userWallets);
         return;
       case MessageActionsResponses.errorMessage:
-        setMessagErrors(event.data.errorMessage);
+        setMessageErrors(event.data.errorMessage);
         return;
       default:
         return;
@@ -235,7 +262,9 @@ export const useDfns = ({
     login,
     logout,
     sign,
+    registerUser,
     onIframeLoaded,
+    signTransaction,
     userAuthToken,
     userWallets,
     isDfnsReady,
