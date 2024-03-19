@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
+import { IframeActiveState } from "@/app/hooks/useDfns";
 const IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 
 interface DfnsIframeProps {
@@ -9,13 +9,18 @@ interface DfnsIframeProps {
   iframeUrl?: string;
   iframeHeight?: number;
   iframeWidth?: number;
-  onLoad?: (iframe: HTMLIFrameElement) => void;
+  initialScreen?: IframeActiveState;
+  onLoad?: (
+    iframe: HTMLIFrameElement,
+    initialScreen: IframeActiveState
+  ) => void;
 }
 export const DfnsIframe = ({
   isVisible = true,
   iframeUrl = IFRAME_URL,
   iframeHeight = 400,
   iframeWidth = 400,
+  initialScreen = IframeActiveState.default,
   onLoad,
 }: DfnsIframeProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -24,10 +29,10 @@ export const DfnsIframe = ({
     const iframe: HTMLIFrameElement | null = iframeRef.current;
     if (iframe) {
       iframe.onload = () => {
-        if (onLoad) onLoad(iframe);
+        if (onLoad) onLoad(iframe, initialScreen);
       };
     }
-  }, [iframeRef, onLoad]);
+  }, [iframeRef, onLoad, initialScreen]);
   return (
     <>
       {isVisible && iframeUrl && (

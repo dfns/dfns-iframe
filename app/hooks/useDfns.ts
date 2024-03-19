@@ -7,6 +7,11 @@ import {
   useCallback,
   MutableRefObject,
 } from "react";
+import {
+  UserRegistrationChallenge,
+  UserRegistrationResponse,
+  Fido2Attestation,
+} from "@dfns/sdk";
 
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
@@ -31,7 +36,10 @@ export type MessagePayload = {
   action: MessageActions;
   IframeActiveState: IframeActiveState;
   userName?: string;
-  challenge?: {};
+  challenge?:
+    | UserRegistrationChallenge
+    | UserRegistrationResponse
+    | Fido2Attestation;
   appId?: string;
   orgId?: string;
   errorMessage?: string;
@@ -54,6 +62,9 @@ enum MessageActionsResponses {
 export enum IframeActiveState {
   default = "default",
   createUserAndWallet = "createUserAndWallet",
+  signTransaction = "signTransaction",
+  recoveryDetails = "recoveryDetails",
+  credentialsList = "credentialsList",
 }
 interface DfnsProps {
   iframeRef?: MutableRefObject<HTMLIFrameElement | null | undefined>;
@@ -63,7 +74,7 @@ interface DfnsProps {
 export const useDfns = ({
   userName,
   iframeRef,
-  initialInterfaceState,
+  initialInterfaceState = IframeActiveState.default,
 }: DfnsProps) => {
   const popupRef = useRef<Window | null>(null);
   const intervalId = useRef<number>(0);
@@ -71,9 +82,11 @@ export const useDfns = ({
 
   const [isIframeLoaded, setIsIframeLoaded] = useState(false);
   const [isPopupLoaded] = useState(false);
+  const [iframeScreen, setIframeScreen] = useState<IframeActiveState>(
+    initialInterfaceState
+  );
   const [userWallets, setUserWallets] = useState();
   const [messageErrors, setMessagErrors] = useState("false");
-  initialInterfaceState;
 
   const [userAuthToken, setUserAuthToken] = useState("");
   const [messageTarget] = useState<MessageWindowOptions>("iframe");
@@ -106,12 +119,12 @@ export const useDfns = ({
   const getAuthToken = useCallback(async () => {
     sendMessageToDfns({
       action: MessageActions.updateIframeScreenState,
-      IframeActiveState: initialInterfaceState,
+      IframeActiveState: iframeScreen,
     } as MessagePayload);
     sendMessageToDfns({
       action: MessageActions.getAuthToken,
     } as MessagePayload);
-  }, [sendMessageToDfns, initialInterfaceState]);
+  }, [sendMessageToDfns, iframeScreen]);
 
   const login = () => {
     sendMessageToDfns({
@@ -124,16 +137,22 @@ export const useDfns = ({
     sendMessageToDfns({ action: MessageActions.logout } as MessagePayload);
   };
 
-  const sign = (challenge) => {
+  const sign = (challenge: UserRegistrationChallenge) => {
     sendMessageToDfns({
       action: MessageActions.sign,
       challenge,
     } as MessagePayload);
   };
 
-  const onIframeLoaded = (iframe: HTMLIFrameElement) => {
+  const onIframeLoaded = (
+    iframe: HTMLIFrameElement,
+    initialScreen: IframeActiveState
+  ) => {
     setIsIframeLoaded(true);
-    if (iframeRef) iframeRef.current = iframe;
+    if (iframeRef) {
+      iframeRef.current = iframe;
+    }
+    setIframeScreen(initialScreen);
   };
 
   const openPopup = () => {
@@ -153,6 +172,13 @@ export const useDfns = ({
       return;
     }
     console.log("opened popup ", popupRef.current);
+  };
+
+  const changeIframeScreen = (screenName: IframeActiveState) => {
+    sendMessageToDfns({
+      action: MessageActions.updateIframeScreenState,
+      IframeActiveState: screenName,
+    });
   };
 
   const handleReceivedWindowMessages = async (event: MessageEvent) => {
@@ -217,6 +243,7 @@ export const useDfns = ({
     IFRAME_URL,
     WINDOW_W,
     WINDOW_H,
+    changeIframeScreen,
     sendMessageToDfns,
   };
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { parseUnits, Transaction } from "ethers";
 
 import {
   useDfns,
@@ -14,9 +13,7 @@ import { DfnsIframe } from "@/app/components/DfnsIframe";
 export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [userName] = useState("rod+local9224@dfns.co");
-
   const iframeRef = useRef(null);
-
   const {
     login,
     logout,
@@ -24,21 +21,22 @@ export default function Home() {
     onIframeLoaded,
     userAuthToken,
     sendMessageToDfns,
+    changeIframeScreen,
     userWallets,
     messageErrors,
   } = useDfns({
     iframeRef,
     userName,
-    initialInterfaceState: IframeActiveState.createUserAndWallet,
   });
-
   const { createNewUser, errorMessage } = useServerRequests({
     sendMessageToDfns,
   });
-
-  const sendTransaction = (walletId: string, address: string) => {
+  const sendTransaction = (
+    walletId: string,
+    address: string = "0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd"
+  ) => {
     const tx = {
-      to: "0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd",
+      to: address,
       value: "1",
       gasLimit: "21000",
       maxPriorityFeePerGas: "50000000000",
@@ -47,10 +45,6 @@ export default function Home() {
       type: 2,
       chainId: 11155111,
     };
-
-    console.log("send transaction payload", { tx });
-    console.log("send transactions to address", address);
-
     sendMessageToDfns({
       action: MessageActions.doCreateWalletSignature,
       walletId,
@@ -91,10 +85,28 @@ export default function Home() {
         </button>
         <button
           className="bg-[black] text-[white] p-4  my-4"
-          onClick={() => createNewUser(userName)}
+          onClick={() => {
+            createNewUser(userName);
+          }}
         >
           Register New User
         </button>
+      </div>
+      <div>
+        change iframe screen
+        <select
+          className="py-2 px-5 m-2 rounded-xl"
+          onChange={(e) =>
+            changeIframeScreen(e.target.value as IframeActiveState.default)
+          }
+        >
+          <option>select screen...</option>
+          {Object.values(IframeActiveState).map((screen, i) => (
+            <option key={i} value={screen}>
+              {screen}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="flex  flex-col gap-2">
         {!!userAuthToken && (
@@ -130,7 +142,7 @@ export default function Home() {
                 <h3 className="text-sm mb-0 pb-0 font-bold">User Wallets</h3>
                 <ul>
                   {!!userWallets &&
-                    userWallets.items.map((w, index) => (
+                    userWallets.items.map((w, index: number) => (
                       <li
                         key={index}
                         className="py-2  text-sm flex flex-row gap-2"
@@ -155,7 +167,10 @@ export default function Home() {
         )}
       </div>
 
-      <DfnsIframe onLoad={onIframeLoaded} />
+      <DfnsIframe
+        onLoad={onIframeLoaded}
+        initialScreen={IframeActiveState.default}
+      />
     </main>
   );
 }
