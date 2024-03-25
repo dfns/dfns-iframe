@@ -1,4 +1,7 @@
-import { UserAuthKind } from "@dfns/sdk/codegen/datamodel/Auth";
+import {
+  UserAuthKind,
+  UserRegistrationChallenge,
+} from "@dfns/sdk/codegen/datamodel/Auth";
 
 // Note:
 // create user init (requires service account)
@@ -7,7 +10,7 @@ import { UserAuthKind } from "@dfns/sdk/codegen/datamodel/Auth";
 // which we don't want exposed in the client
 
 export const useServerRequests = () => {
-  const getCreateNewUserChallenge = async (userName: string) => {
+  const getRegisterInitChallenge = async (userName: string) => {
     try {
       if (!userName) {
         throw new Error("Username not set");
@@ -19,14 +22,15 @@ export const useServerRequests = () => {
           kind: UserAuthKind.EndUser,
         }),
       });
-      const challenge = await response.json();
 
-      if (!!challenge.error) {
-        throw new Error(challenge.error);
+      const challenge = await response.json();
+      if (challenge.ok === false) {
+        throw new Error(challenge.error || "Unknown error");
       }
       return challenge;
     } catch (e) {
-      throw new Error(e.message);
+      console.log("getRegisterInitChallenge:", e);
+      throw e;
     }
   };
 
@@ -45,12 +49,34 @@ export const useServerRequests = () => {
 
       return response;
     } catch (e) {
-      throw new Error(e.message);
+      console.error(e.message);
+    }
+  };
+
+  const delegatedLoginNewUser = async (userName) => {
+    try {
+      if (!userName) {
+        throw new Error("user not set");
+      }
+      // Note: this nextjs instance has server-side code
+      const response = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: userName,
+        }),
+      });
+      const parsedResponse = await response.json();
+      console.log("delegatedLoginNewUser response:", { parsedResponse });
+
+      return parsedResponse;
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
   return {
-    getCreateNewUserChallenge,
+    getRegisterInitChallenge,
     addPermissionsToNewUser,
+    delegatedLoginNewUser,
   };
 };

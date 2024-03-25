@@ -21,10 +21,13 @@ const WINDOW_H = 400;
 
 type MessageWindowOptions = "iframe" | "popup";
 export enum MessageActions {
-  startAuth = "startAuth",
+  login = "login",
+  registerInitSign = "registerInitSign",
+  registerInit = "registerInit",
   registerAuth = "registerAuth",
   createWallet = "createWallet",
   listWallets = "listWallets",
+  loginWithToken = "loginWithToken",
   signWalletTransaction = "signWalletTransaction",
   signWalletSignature = "signWalletSignature",
   getAuthToken = "getAuthToken",
@@ -32,11 +35,13 @@ export enum MessageActions {
   logout = "logout",
   requestUserSignature = "requestUserSignature",
   updateIframeScreenState = "updateIframeScreenState",
+  parentErrorMessage = "parentErrorMessage",
 }
 export type MessagePayload = {
   action: MessageActions;
   IframeActiveState?: IframeActiveState;
   userName?: string;
+  token?: string;
   challenge?:
     | UserRegistrationChallenge
     | UserRegistrationResponse
@@ -49,6 +54,8 @@ export type MessagePayload = {
   walletId?: string;
   transaction?: {};
   kind?: string;
+  onLoginShow?: IframeActiveState;
+  onLogoutShow?: IframeActiveState;
 };
 export enum MessageActionsResponses {
   authToken = "authToken",
@@ -62,12 +69,22 @@ export enum MessageActionsResponses {
   initCreateUserAndWallet = "initCreateUserAndWallet",
   signedChallenge = "signedChallenge",
 }
+export enum MessageParentActionsResponses {
+  initUserRegister = "initUserRegister",
+  completeUserRegister = "completeUserRegister",
+  userLoginInitComplete = "userLoginInitComplete",
+  userLoginWithTokenComplete = "userLoginWithTokenComplete",
+  userLoginSuccess = "userLoginSuccess",
+  userLogoutSuccess = "userLogoutSuccess",
+  error = "error",
+}
 export enum IframeActiveState {
   default = "default",
   createUserAndWallet = "createUserAndWallet",
   signTransaction = "signTransaction",
   recoveryDetails = "recoveryDetails",
   credentialsList = "credentialsList",
+  userWallet = "userWallet",
 }
 interface DfnsProps {
   iframeRef?: MutableRefObject<HTMLIFrameElement | null | undefined>;
@@ -131,21 +148,41 @@ export const useDfns = ({
     } as MessagePayload);
   }, [sendMessageToDfns, iframeScreen]);
 
-  const login = () => {
-    console.log("do login");
+  const loginUserWithToken = (token: string) => {
     sendMessageToDfns({
-      action: MessageActions.startAuth,
-      userName,
+      action: MessageActions.loginWithToken,
+      token,
     } as MessagePayload);
   };
 
-  const logout = () => {
-    sendMessageToDfns({ action: MessageActions.logout } as MessagePayload);
+  interface LoginArgs {
+    userName?: string;
+    onLoginShow?: IframeActiveState;
+  }
+  const login = ({ userName, onLoginShow }: LoginArgs) => {
+    if (!userName) {
+      return;
+    }
+    sendMessageToDfns({
+      action: MessageActions.login,
+      userName,
+      onLoginShow,
+    } as MessagePayload);
   };
 
-  const registerUser = (userName, challenge) => {
+  interface LogoutArgs {
+    onLogoutShow?: IframeActiveState;
+  }
+  const logout = ({ onLogoutShow }: LogoutArgs) => {
     sendMessageToDfns({
-      action: MessageActions.registerAuth,
+      action: MessageActions.logout,
+      onLogoutShow,
+    } as MessagePayload);
+  };
+
+  const registerUserInitSign = (userName: string, challenge) => {
+    sendMessageToDfns({
+      action: MessageActions.registerInitSign,
       userName,
       challenge,
     } as MessagePayload);
@@ -164,6 +201,15 @@ export const useDfns = ({
       walletId,
       transaction,
       kind,
+    });
+  };
+
+  const createWallet = () => {
+    sendMessageToDfns({
+      action: MessageActions.createWallet,
+      userName,
+      walletName: "test wallet name",
+      networkId: "EthereumSepolia",
     });
   };
 
@@ -204,50 +250,70 @@ export const useDfns = ({
     });
   };
 
-  const handleReceivedWindowMessages = async (event: MessageEvent) => {
-    // console.log("all messages", event);
-    if (!IFRAME_URL.includes(event.origin)) {
-      return;
-    }
-
-    const action = event?.data?.action || "";
-    if (!Object.values(MessageActionsResponses).includes(action)) {
-      return;
-    }
-
-    isMessageReplied.current = true;
-
-    // hook into all messages
-    if (onReceiveDfnsMessage) onReceiveDfnsMessage(event);
-
-    switch (action) {
-      case MessageActionsResponses.authToken:
-        setIsMessageTargetReady(true);
-        setUserAuthToken(event.data.userAuthToken);
-        return;
-      case MessageActionsResponses.registered:
-        console.log("user registered", event);
-        return;
-      case MessageActionsResponses.walletCreated:
-        console.log("walletCreated", event);
-        return;
-      case MessageActionsResponses.walletsList:
-        console.log("walletsList", event);
-        setUserWallets(event.data.userWallets);
-        return;
-      case MessageActionsResponses.errorMessage:
-        setMessageErrors(event.data.errorMessage);
-        return;
-      default:
-        return;
-    }
+  const showErrorInDfns = (errorMessage: string) => {
+    console.log("tell iframe to update and show error");
+    sendMessageToDfns({
+      action: MessageActions.parentErrorMessage,
+      errorMessage,
+    });
   };
+
+  const handleReceivedWindowMessages = useCallback(
+    async (event: MessageEvent) => {
+      // console.log("all messages", event);
+      if (!IFRAME_URL.includes(event.origin)) {
+        return;
+      }
+
+      const action = event?.data?.action || "";
+      const parentAction = event?.data?.parentAction || "";
+      if (
+        !Object.values(MessageActionsResponses).includes(action) &&
+        !Object.values(MessageParentActionsResponses).includes(parentAction)
+      ) {
+        return;
+      }
+
+      isMessageReplied.current = true;
+      setIsMessageTargetReady(true);
+
+      if (
+        !!onReceiveDfnsMessage &&
+        Object.values(MessageParentActionsResponses).includes(parentAction)
+      ) {
+        // actions intended for parent to resolve
+        onReceiveDfnsMessage(event);
+      }
+
+      switch (action) {
+        case MessageActionsResponses.authToken:
+          setUserAuthToken(event.data.userAuthToken);
+          return;
+        case MessageActionsResponses.registered:
+          console.log("user registered", event);
+          return;
+        case MessageActionsResponses.walletCreated:
+          console.log("walletCreated", event);
+          return;
+        case MessageActionsResponses.walletsList:
+          console.log("walletsList", event);
+          setUserWallets(event.data.userWallets);
+          return;
+        case MessageActionsResponses.errorMessage:
+          setMessageErrors(event.data.errorMessage);
+          return;
+        default:
+          return;
+      }
+    },
+    [onReceiveDfnsMessage]
+  );
 
   useEffect(() => {
     window.addEventListener("message", handleReceivedWindowMessages, false);
     return () =>
       window.removeEventListener("message", handleReceivedWindowMessages);
-  }, []);
+  }, [handleReceivedWindowMessages]);
 
   useEffect(() => {
     clearInterval(intervalId.current);
@@ -262,9 +328,11 @@ export const useDfns = ({
     login,
     logout,
     sign,
-    registerUser,
+    registerUserInitSign,
     onIframeLoaded,
     signTransaction,
+    loginUserWithToken,
+    createWallet,
     userAuthToken,
     userWallets,
     isDfnsReady,
@@ -274,5 +342,6 @@ export const useDfns = ({
     WINDOW_H,
     changeIframeScreen,
     sendMessageToDfns,
+    showErrorInDfns,
   };
 };

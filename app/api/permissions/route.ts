@@ -1,7 +1,5 @@
-import { BaseAuthApi } from "@dfns/sdk";
 import { NextResponse } from "next/server";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { DFNS_END_USER_TOKEN_COOKIE } from "../constants";
 import { dfns } from "../utils";
 
 export async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -28,6 +26,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         identityId: user.id,
       },
     });
+
     return NextResponse.json(
       { permission, permissionAssignment },
       {

@@ -17,8 +17,11 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     });
   } catch (e) {
     return NextResponse.json(
-      { ok: false, error: `error: ${e}` },
-      { status: 401 }
+      {
+        ok: false,
+        error: e?.message || "Server error",
+      },
+      { status: e?.httpStatus || 500 }
     );
   }
 }
