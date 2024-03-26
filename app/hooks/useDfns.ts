@@ -12,6 +12,10 @@ import {
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
+import {
+  CreateWalletResponse,
+  ListWalletsResponse,
+} from "@dfns/datamodel/dist/Wallets";
 
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
@@ -33,26 +37,28 @@ export enum MessageActions {
   getAuthToken = "getAuthToken",
   createUserRegistration = "createUserRegistration",
   logout = "logout",
-  requestUserSignature = "requestUserSignature",
+  // requestUserSignature = "requestUserSignature",
   updateIframeScreenState = "updateIframeScreenState",
-  parentErrorMessage = "parentErrorMessage",
 }
-export type MessagePayload = {
-  action: MessageActions;
-  IframeActiveState?: IframeActiveState;
-  userName?: string;
-  token?: string;
-  challenge?:
-    | UserRegistrationChallenge
-    | UserRegistrationResponse
-    | Fido2Attestation;
-  appId?: string;
-  orgId?: string;
+export type MessageResponsePayload = {
+  action?: MessageActionsResponses;
+  parentAction?: MessageParentActionsResponses;
+  userAuthToken?: string;
   errorMessage?: string;
-  walletName?: string;
-  networkId?: string;
+  signedInitRegistration?: UserRegistrationResponse;
+  userLoginResponse?: {
+    token: string;
+  };
+  userFromToken?: {
+    id: string;
+    username: string;
+    orgId: string;
+  };
+  signedChallenge?: Fido2Attestation;
+  createdWallet?: CreateWalletResponse;
+  // transaction?: {}
   walletId?: string;
-  transaction?: {};
+  userWallets?: ListWalletsResponse;
   kind?: string;
   onLoginShow?: IframeActiveState;
   onLogoutShow?: IframeActiveState;
@@ -83,6 +89,7 @@ export enum IframeActiveState {
   createUserAndWallet = "createUserAndWallet",
   signTransaction = "signTransaction",
   recoveryDetails = "recoveryDetails",
+  recoveryCodes = "recoveryCodes",
   credentialsList = "credentialsList",
   userWallet = "userWallet",
 }
@@ -250,14 +257,6 @@ export const useDfns = ({
     });
   };
 
-  const showErrorInDfns = (errorMessage: string) => {
-    console.log("tell iframe to update and show error");
-    sendMessageToDfns({
-      action: MessageActions.parentErrorMessage,
-      errorMessage,
-    });
-  };
-
   const handleReceivedWindowMessages = useCallback(
     async (event: MessageEvent) => {
       // console.log("all messages", event);
@@ -342,6 +341,5 @@ export const useDfns = ({
     WINDOW_H,
     changeIframeScreen,
     sendMessageToDfns,
-    showErrorInDfns,
   };
 };

@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dfns/datamodel": "^5.63.3",
     "@dfns/sdk": "^0.3.2",
     "@dfns/sdk-keysigner": "^0.3.2",
     "ethers": "^6.11.1",

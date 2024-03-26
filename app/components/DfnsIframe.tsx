@@ -38,7 +38,7 @@ export const DfnsIframe = ({
       {isVisible && iframeUrl && (
         <iframe
           ref={iframeRef}
-          allow="payment; publickey-credentials-get *"
+          allow="payment; publickey-credentials-get *; clipboard-read; clipboard-write;"
           id="dfnsIframe"
           src={iframeUrl}
           style={{
