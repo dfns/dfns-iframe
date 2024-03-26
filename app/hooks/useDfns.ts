@@ -28,7 +28,7 @@ export enum MessageActions {
   login = "login",
   registerInitSign = "registerInitSign",
   registerInit = "registerInit",
-  registerAuth = "registerAuth",
+  // registerAuth = "registerAuth",
   createWallet = "createWallet",
   listWallets = "listWallets",
   loginWithToken = "loginWithToken",
@@ -65,23 +65,19 @@ export type MessageResponsePayload = {
 };
 export enum MessageActionsResponses {
   authToken = "authToken",
-  actionError = "actionError",
-  attestation = "attestation",
   authenticated = "authenticated",
   errorMessage = "errorMessage",
   registered = "registered",
   walletCreated = "walletCreated",
   walletsList = "walletsList",
   initCreateUserAndWallet = "initCreateUserAndWallet",
-  signedChallenge = "signedChallenge",
 }
 export enum MessageParentActionsResponses {
   initUserRegister = "initUserRegister",
   completeUserRegister = "completeUserRegister",
-  userLoginInitComplete = "userLoginInitComplete",
-  userLoginWithTokenComplete = "userLoginWithTokenComplete",
   userLoginSuccess = "userLoginSuccess",
   userLogoutSuccess = "userLogoutSuccess",
+  userLoginWithTokenComplete = "userLoginWithTokenComplete",
   error = "error",
 }
 export enum IframeActiveState {
@@ -91,6 +87,7 @@ export enum IframeActiveState {
   recoveryDetails = "recoveryDetails",
   recoveryCodes = "recoveryCodes",
   credentialsList = "credentialsList",
+  parentErrorMessage = "parentErrorMessage",
   userWallet = "userWallet",
 }
 interface DfnsProps {
