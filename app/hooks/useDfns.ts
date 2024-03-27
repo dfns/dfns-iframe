@@ -27,18 +27,16 @@ type MessageWindowOptions = "iframe" | "popup";
 export enum MessageActions {
   login = "login",
   registerInitSign = "registerInitSign",
-  registerInit = "registerInit",
-  // registerAuth = "registerAuth",
   createWallet = "createWallet",
   listWallets = "listWallets",
-  loginWithToken = "loginWithToken",
+  userWalletExists = "userWalletExists",
   signWalletTransaction = "signWalletTransaction",
-  signWalletSignature = "signWalletSignature",
   getAuthToken = "getAuthToken",
-  createUserRegistration = "createUserRegistration",
+  loginWithToken = "loginWithToken",
+  registerInit = "registerInit",
   logout = "logout",
-  // requestUserSignature = "requestUserSignature",
   updateIframeScreenState = "updateIframeScreenState",
+  parentErrorMessage = "parentErrorMessage",
 }
 export type MessageResponsePayload = {
   action?: MessageActionsResponses;
@@ -56,13 +54,14 @@ export type MessageResponsePayload = {
   };
   signedChallenge?: Fido2Attestation;
   createdWallet?: CreateWalletResponse;
-  // transaction?: {}
   walletId?: string;
   userWallets?: ListWalletsResponse;
   kind?: string;
   onLoginShow?: IframeActiveState;
   onLogoutShow?: IframeActiveState;
+  userWalletExists?: boolean;
 };
+// Actions internal to dfns action responses
 export enum MessageActionsResponses {
   authToken = "authToken",
   authenticated = "authenticated",
@@ -70,14 +69,15 @@ export enum MessageActionsResponses {
   registered = "registered",
   walletCreated = "walletCreated",
   walletsList = "walletsList",
-  initCreateUserAndWallet = "initCreateUserAndWallet",
 }
+// Actions where iframe parent might need to take action
 export enum MessageParentActionsResponses {
   initUserRegister = "initUserRegister",
   completeUserRegister = "completeUserRegister",
   userLoginSuccess = "userLoginSuccess",
   userLogoutSuccess = "userLogoutSuccess",
   userLoginWithTokenComplete = "userLoginWithTokenComplete",
+  isWalletExists = "isWalletExists",
   error = "error",
 }
 export enum IframeActiveState {
@@ -217,6 +217,12 @@ export const useDfns = ({
     });
   };
 
+  const userWalletExists = () => {
+    sendMessageToDfns({
+      action: MessageActions.userWalletExists,
+    });
+  };
+
   const onIframeLoaded = (
     iframe: HTMLIFrameElement,
     initialScreen: IframeActiveState
@@ -329,6 +335,7 @@ export const useDfns = ({
     signTransaction,
     loginUserWithToken,
     createWallet,
+    userWalletExists,
     userAuthToken,
     userWallets,
     isDfnsReady,

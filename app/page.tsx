@@ -34,11 +34,11 @@ export default function Home() {
     login,
     logout,
     createWallet,
+    userWalletExists,
     registerUserInitSign,
     onIframeLoaded,
     sendMessageToDfns,
     signTransaction,
-    showErrorInDfns,
     loginUserWithToken,
   } = useDfns({
     iframeRef,
@@ -53,11 +53,19 @@ export default function Home() {
         createUserInit();
         return;
       case MessageParentActionsResponses.completeUserRegister:
-        createUserComplete(event);
+        await createUserComplete(event);
         return;
       case MessageParentActionsResponses.userLoginWithTokenComplete:
-        console.log("createwallet");
-        await createWallet();
+      case MessageParentActionsResponses.userLoginSuccess:
+        userWalletExists();
+        return;
+      case MessageParentActionsResponses.isWalletExists:
+        const { isWalletExists } = event.data;
+        if (!isWalletExists) {
+          await createWallet();
+        } else {
+          changeIframeScreen(IframeActiveState.userWallet);
+        }
         return;
       default:
         return;
@@ -76,7 +84,6 @@ export default function Home() {
         return;
       }
       setServerErrorMessage(`${e?.message}` || "server error");
-      showErrorInDfns("Error Creating User");
     }
   }
 
@@ -89,7 +96,6 @@ export default function Home() {
       await loginUserWithToken(token);
     } catch (e) {
       console.error("error adding permissions to new user", e);
-      showErrorInDfns("error adding permissions");
     }
   }
 
