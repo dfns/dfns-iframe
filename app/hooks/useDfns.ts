@@ -1,5 +1,9 @@
 "use client";
-
+import {
+  CreateWalletResponse,
+  ListWalletsResponse,
+  BlockchainNetwork,
+} from "@dfns/datamodel/dist/Wallets";
 import {
   useEffect,
   useState,
@@ -12,10 +16,6 @@ import {
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
-import {
-  CreateWalletResponse,
-  ListWalletsResponse,
-} from "@dfns/datamodel/dist/Wallets";
 
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
@@ -61,6 +61,17 @@ export type MessageResponsePayload = {
   onLogoutShow?: IframeActiveState;
   userWalletExists?: boolean;
 };
+export type MessagePayload = {
+  action: MessageActions;
+  IframeActiveState?: IframeActiveState;
+  token?: string;
+  userName?: string;
+  onLoginShow?: IframeActiveState;
+  onLogoutShow?: IframeActiveState;
+  challenge?: UserRegistrationChallenge;
+  walletName?: string;
+  networkId?: BlockchainNetwork;
+};
 // Actions internal to dfns action responses
 export enum MessageActionsResponses {
   authToken = "authToken",
@@ -84,7 +95,7 @@ export enum IframeActiveState {
   default = "default",
   createUserAndWallet = "createUserAndWallet",
   signTransaction = "signTransaction",
-  recoveryDetails = "recoveryDetails",
+  recoveryCredentials = "recoveryCredentials",
   recoveryCodes = "recoveryCodes",
   credentialsList = "credentialsList",
   parentErrorMessage = "parentErrorMessage",
@@ -184,7 +195,10 @@ export const useDfns = ({
     } as MessagePayload);
   };
 
-  const registerUserInitSign = (userName: string, challenge) => {
+  const registerUserInitSign = (
+    userName: string,
+    challenge: UserRegistrationChallenge
+  ) => {
     sendMessageToDfns({
       action: MessageActions.registerInitSign,
       userName,
@@ -192,28 +206,12 @@ export const useDfns = ({
     } as MessagePayload);
   };
 
-  const sign = (challenge: UserRegistrationChallenge) => {
-    sendMessageToDfns({
-      action: MessageActions.createUserRegistration,
-      challenge,
-    } as MessagePayload);
-  };
-
-  const signTransaction = (walletId, transaction, kind) => {
-    sendMessageToDfns({
-      action: MessageActions.signWalletTransaction,
-      walletId,
-      transaction,
-      kind,
-    });
-  };
-
   const createWallet = () => {
     sendMessageToDfns({
       action: MessageActions.createWallet,
       userName,
       walletName: "test wallet name",
-      networkId: "EthereumSepolia",
+      networkId: BlockchainNetwork.EthereumSepolia,
     });
   };
 
@@ -329,10 +327,8 @@ export const useDfns = ({
   return {
     login,
     logout,
-    sign,
     registerUserInitSign,
     onIframeLoaded,
-    signTransaction,
     loginUserWithToken,
     createWallet,
     userWalletExists,

@@ -11,7 +11,7 @@ import {
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { DfnsIframe } from "@/app/components/DfnsIframe";
 
-const TEST_EMAIL = "rod+grvt50@dfns.co";
+const TEST_EMAIL = "rod+grvt57@dfns.co";
 
 export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -38,7 +38,6 @@ export default function Home() {
     registerUserInitSign,
     onIframeLoaded,
     sendMessageToDfns,
-    signTransaction,
     loginUserWithToken,
   } = useDfns({
     iframeRef,
@@ -88,7 +87,7 @@ export default function Home() {
   }
 
   // completes user creation - step 2
-  async function createUserComplete(event) {
+  async function createUserComplete(event: MessageEvent) {
     try {
       const user = event.data.signedInitRegistration.user;
       await addPermissionsToNewUser(user);
@@ -97,23 +96,6 @@ export default function Home() {
     } catch (e) {
       console.error("error adding permissions to new user", e);
     }
-  }
-
-  function sendTestDemoTransaction(
-    walletId: string,
-    address: string = "0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd"
-  ) {
-    const tx = {
-      to: address,
-      value: "1",
-      gasLimit: "21000",
-      maxPriorityFeePerGas: "50000000000",
-      maxFeePerGas: "20000000000",
-      nonce: 3,
-      type: 2,
-      chainId: 11155111,
-    };
-    signTransaction(walletId, tx, "Transaction");
   }
 
   useEffect(() => {
@@ -210,23 +192,14 @@ export default function Home() {
                   <h3 className="text-sm mb-0 pb-0 font-bold">User Wallets</h3>
                   <ul>
                     {!!userWallets && userWallets?.items?.length > 0 ? (
-                      userWallets.items.map((w, index: number) => (
+                      userWallets.items.map((w: Wallet, index: number) => (
                         <li
                           key={index}
-                          className="py-2  text-sm flex flex-row gap-2"
+                          className="py-2 text-sm flex flex-row gap-2"
                         >
                           <span>
                             {w.status} - {w.network} - {w.address}
                           </span>
-                          <button
-                            onClick={() => {
-                              setServerErrorMessage("");
-                              sendTestDemoTransaction(w.id, w.address);
-                            }}
-                            className="bg-[black] px-4 py-2 rounded-xl text-[white]"
-                          >
-                            Send test transaction
-                          </button>
                         </li>
                       ))
                     ) : (
