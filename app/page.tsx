@@ -2,16 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 
+import { useDfns, IframeActiveState } from "@/app/hooks/useDfns";
 import {
-  useDfns,
   MessageActions,
-  IframeActiveState,
   MessageParentActionsResponses,
-} from "@/app/hooks/useDfns";
+} from "@/app/utils/windowMessage";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { DfnsIframe } from "@/app/components/DfnsIframe";
 
-const TEST_EMAIL = "rod+grvt57@dfns.co";
+const TEST_EMAIL = "rod+grvt59@dfns.co";
 
 export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -44,6 +43,12 @@ export default function Home() {
     userName,
     onReceiveDfnsMessage,
   });
+
+  // TODO
+  // - make methods asyn/away instead of post message
+  // - method has UI element
+  // - pure function without UI
+  // - racing conditions iframe multiple events ongoing
 
   async function onReceiveDfnsMessage(event: MessageEvent) {
     const parentAction = event.data.parentAction;
@@ -216,7 +221,7 @@ export default function Home() {
       <div className="border-8 border-sky-500 w-[420px]">
         <DfnsIframe
           onLoad={onIframeLoaded}
-          initialScreen={IframeActiveState.createUserAndWallet}
+          initialScreen={IframeActiveState.recoveryCredentials}
         />
       </div>
     </main>

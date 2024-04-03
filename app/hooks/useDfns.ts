@@ -1,9 +1,5 @@
 "use client";
-import {
-  CreateWalletResponse,
-  ListWalletsResponse,
-  BlockchainNetwork,
-} from "@dfns/datamodel/dist/Wallets";
+import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 import {
   useEffect,
   useState,
@@ -11,86 +7,22 @@ import {
   useCallback,
   MutableRefObject,
 } from "react";
+import { UserRegistrationChallenge } from "@dfns/sdk";
 import {
-  UserRegistrationChallenge,
-  UserRegistrationResponse,
-  Fido2Attestation,
-} from "@dfns/sdk";
+  MessageActions,
+  MessagePayload,
+  MessageActionsResponses,
+  MessageParentActionsResponses,
+} from "@/app/utils/windowMessage";
 
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
-const IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
+const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 const WINDOW_W = 400;
 const WINDOW_H = 400;
 
 type MessageWindowOptions = "iframe" | "popup";
-export enum MessageActions {
-  login = "login",
-  registerInitSign = "registerInitSign",
-  createWallet = "createWallet",
-  listWallets = "listWallets",
-  userWalletExists = "userWalletExists",
-  signWalletTransaction = "signWalletTransaction",
-  getAuthToken = "getAuthToken",
-  loginWithToken = "loginWithToken",
-  registerInit = "registerInit",
-  logout = "logout",
-  updateIframeScreenState = "updateIframeScreenState",
-  parentErrorMessage = "parentErrorMessage",
-}
-export type MessageResponsePayload = {
-  action?: MessageActionsResponses;
-  parentAction?: MessageParentActionsResponses;
-  userAuthToken?: string;
-  errorMessage?: string;
-  signedInitRegistration?: UserRegistrationResponse;
-  userLoginResponse?: {
-    token: string;
-  };
-  userFromToken?: {
-    id: string;
-    username: string;
-    orgId: string;
-  };
-  signedChallenge?: Fido2Attestation;
-  createdWallet?: CreateWalletResponse;
-  walletId?: string;
-  userWallets?: ListWalletsResponse;
-  kind?: string;
-  onLoginShow?: IframeActiveState;
-  onLogoutShow?: IframeActiveState;
-  userWalletExists?: boolean;
-};
-export type MessagePayload = {
-  action: MessageActions;
-  IframeActiveState?: IframeActiveState;
-  token?: string;
-  userName?: string;
-  onLoginShow?: IframeActiveState;
-  onLogoutShow?: IframeActiveState;
-  challenge?: UserRegistrationChallenge;
-  walletName?: string;
-  networkId?: BlockchainNetwork;
-};
-// Actions internal to dfns action responses
-export enum MessageActionsResponses {
-  authToken = "authToken",
-  authenticated = "authenticated",
-  errorMessage = "errorMessage",
-  registered = "registered",
-  walletCreated = "walletCreated",
-  walletsList = "walletsList",
-}
-// Actions where iframe parent might need to take action
-export enum MessageParentActionsResponses {
-  initUserRegister = "initUserRegister",
-  completeUserRegister = "completeUserRegister",
-  userLoginSuccess = "userLoginSuccess",
-  userLogoutSuccess = "userLogoutSuccess",
-  userLoginWithTokenComplete = "userLoginWithTokenComplete",
-  isWalletExists = "isWalletExists",
-  error = "error",
-}
+
 export enum IframeActiveState {
   default = "default",
   createUserAndWallet = "createUserAndWallet",
@@ -137,7 +69,7 @@ export const useDfns = ({
         if (!isIframeLoaded || !iframeRef?.current?.contentWindow) return;
         iframeRef.current.contentWindow.postMessage(
           { ...payload, appId: APP_ID, orgId: ORG_ID },
-          IFRAME_URL
+          DFNS_IFRAME_URL
         );
       } else if (messageTarget === "popup") {
         // NOTE: popups are necessary for browsers that do not support
@@ -147,7 +79,7 @@ export const useDfns = ({
           openPopup();
           return;
         }
-        popupRef.current.postMessage(payload, IFRAME_URL);
+        popupRef.current.postMessage(payload, DFNS_IFRAME_URL);
       }
     },
     [messageTarget, iframeRef, isIframeLoaded, isPopupLoaded, popupRef]
@@ -238,7 +170,7 @@ export const useDfns = ({
     const left = window.screen.availWidth / 2;
     const top = window.screen.availHeight / 2 - 250;
     popupRef.current = window.open(
-      IFRAME_URL,
+      DFNS_IFRAME_URL,
       "dfns-popup",
       `popup,width=${WINDOW_W},height=${WINDOW_H},left=${left},top=${top}`
     );
@@ -261,7 +193,7 @@ export const useDfns = ({
   const handleReceivedWindowMessages = useCallback(
     async (event: MessageEvent) => {
       // console.log("all messages", event);
-      if (!IFRAME_URL.includes(event.origin)) {
+      if (!DFNS_IFRAME_URL.includes(event.origin)) {
         return;
       }
 
@@ -332,14 +264,14 @@ export const useDfns = ({
     loginUserWithToken,
     createWallet,
     userWalletExists,
+    changeIframeScreen,
+    sendMessageToDfns,
     userAuthToken,
     userWallets,
     isDfnsReady,
     messageErrors,
-    IFRAME_URL,
+    DFNS_IFRAME_URL,
     WINDOW_W,
     WINDOW_H,
-    changeIframeScreen,
-    sendMessageToDfns,
   };
 };

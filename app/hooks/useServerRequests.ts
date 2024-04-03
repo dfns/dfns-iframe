@@ -1,7 +1,4 @@
-import {
-  UserAuthKind,
-  UserRegistrationChallenge,
-} from "@dfns/sdk/codegen/datamodel/Auth";
+import { UserAuthKind } from "@dfns/sdk/codegen/datamodel/Auth";
 
 // Note:
 // create user init (requires service account)
@@ -53,7 +50,7 @@ export const useServerRequests = () => {
     }
   };
 
-  const delegatedLoginNewUser = async (userName) => {
+  const delegatedLoginNewUser = async (userName: string) => {
     try {
       if (!userName) {
         throw new Error("user not set");
