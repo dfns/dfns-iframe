@@ -11,6 +11,7 @@ import {
 import { IframeActiveState } from "@/app/hooks/useDfns";
 
 export enum MessageActions {
+  iframeReady = "iframeReady",
   login = "login",
   registerInitSign = "registerInitSign",
   createWallet = "createWallet",
@@ -82,14 +83,14 @@ const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 
 type MessagePromisePayload = {
   payload: {
-    action: "iframeReady";
+    action: MessageActions;
     actionResponse: "IframeReadyResponse";
   };
 };
 
 export const sendMessageToIframe = <MessagePromisePayload, TResponse>(
   iframe: HTMLIFrameElement,
-  message: MessagePromisePayload
+  payload: MessagePromisePayload
 ): Promise<TResponse> => {
   return new Promise((resolve, reject) => {
     const messageHandler = (event: MessageEvent) => {
@@ -109,7 +110,7 @@ export const sendMessageToIframe = <MessagePromisePayload, TResponse>(
     window.addEventListener("message", messageHandler, false);
     try {
       if (iframe.contentWindow) {
-        iframe.contentWindow.postMessage(message, DFNS_IFRAME_URL);
+        iframe.contentWindow.postMessage(payload, DFNS_IFRAME_URL);
       }
     } catch (error) {
       window.removeEventListener("message", messageHandler, false);

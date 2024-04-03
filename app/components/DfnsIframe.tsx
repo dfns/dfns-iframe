@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { IframeActiveState } from "@/app/hooks/useDfns";
-const IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
+const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 
 interface DfnsIframeProps {
   isVisible?: boolean;
@@ -15,40 +15,49 @@ interface DfnsIframeProps {
     initialScreen: IframeActiveState
   ) => void;
 }
-export const DfnsIframe = ({
-  isVisible = true,
-  iframeUrl = IFRAME_URL,
-  iframeHeight = 400,
-  iframeWidth = 400,
-  initialScreen = IframeActiveState.default,
-  onLoad,
-}: DfnsIframeProps) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  useEffect(() => {
-    if (!iframeRef?.current) return;
-    const iframe: HTMLIFrameElement | null = iframeRef.current;
-    if (iframe) {
-      iframe.onload = () => {
-        if (onLoad) onLoad(iframe, initialScreen);
-      };
-    }
-  }, [iframeRef, onLoad, initialScreen]);
-  return (
-    <>
-      {isVisible && iframeUrl && (
-        <iframe
-          ref={iframeRef}
-          allow="payment; publickey-credentials-get *; clipboard-read; clipboard-write;"
-          id="dfnsIframe"
-          src={iframeUrl}
-          style={{
-            width: `${iframeWidth}px`,
-            height: `${iframeHeight}px`,
-            overflow: "hidden",
-            display: isVisible ? "" : "none",
-          }}
-        />
-      )}
-    </>
-  );
-};
+export const DfnsIframe = React.forwardRef<HTMLIFrameElement, DfnsIframeProps>(
+  (
+    {
+      isVisible = true,
+      iframeUrl = DFNS_IFRAME_URL,
+      iframeHeight = 400,
+      iframeWidth = 400,
+      initialScreen = IframeActiveState.default,
+      onLoad,
+    },
+    ref
+  ) => {
+    // const iframeRef = useRef<HTMLIFrameElement>(null);
+    useEffect(() => {
+      if (!ref?.current) return;
+      const iframe: HTMLIFrameElement | null = ref.current;
+      if (iframe) {
+        iframe.onload = () => {
+          if (onLoad) onLoad(iframe, initialScreen);
+        };
+      }
+    }, [ref, onLoad, initialScreen]);
+    return (
+      <>
+        {isVisible && iframeUrl && (
+          <iframe
+            ref={ref}
+            allow="payment; publickey-credentials-get *; clipboard-read; clipboard-write;"
+            id="dfnsIframe"
+            src={iframeUrl}
+            style={{
+              width: `${iframeWidth}px`,
+              height: `${iframeHeight}px`,
+              overflow: "hidden",
+              display: isVisible ? "" : "none",
+            }}
+          />
+        )}
+      </>
+    );
+  }
+);
+
+DfnsIframe.displayName = "DfnsIframe";
+
+export default DfnsIframe;
