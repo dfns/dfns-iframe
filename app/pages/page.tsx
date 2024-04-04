@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+
 import { useDfns, IframeActiveState } from "@/app/hooks/useDfns";
 import {
   MessageActions,
   MessageParentActionsResponses,
-} from "@/app/utils/dfns/windowMessage";
+} from "@/app/utils/windowMessage";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
-import { DfnsIframe } from "@/app/utils/dfns/components/DfnsIframe";
+import { DfnsIframe } from "@/app/components/DfnsIframe";
 
-const TEST_EMAIL = "rod+grvt72@dfns.co";
+const TEST_EMAIL = "rod+grvt59@dfns.co";
 
 export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -137,7 +138,7 @@ export default function Home() {
           <button
             className="bg-[black] text-[white] p-4 my-4"
             onClick={() => {
-              logout({ showScreen: IframeActiveState.createUserAndWallet });
+              logout({ onLogoutShow: IframeActiveState.createUserAndWallet });
             }}
           >
             Logout

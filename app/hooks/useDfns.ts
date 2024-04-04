@@ -13,7 +13,7 @@ import {
   MessagePayload,
   MessageActionsResponses,
   MessageParentActionsResponses,
-} from "@/app/utils/windowMessage";
+} from "@/app/utils/dfns/windowMessage";
 
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
@@ -112,6 +112,7 @@ export const useDfns = ({
     }
     sendMessageToDfns({
       action: MessageActions.login,
+      actionResponse: MessageActionsResponses.loginSuccess,
       userName,
       onLoginShow,
     } as MessagePayload);
@@ -123,6 +124,7 @@ export const useDfns = ({
   const logout = ({ onLogoutShow }: LogoutArgs) => {
     sendMessageToDfns({
       action: MessageActions.logout,
+      actionResponse: MessageActionsResponses.logoutSuccess,
       onLogoutShow,
     } as MessagePayload);
   };
