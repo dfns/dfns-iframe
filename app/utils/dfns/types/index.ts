@@ -24,14 +24,14 @@ export enum MessageActions {
   iframeReady = "iframeReady",
   login = "login",
   logout = "logout",
-
-  registerInitSign = "registerInitSign",
+  signRegisterInit = "signRegisterInit",
+  loginWithToken = "loginWithToken",
   createWallet = "createWallet",
+
   listWallets = "listWallets",
   userWalletExists = "userWalletExists",
   signWalletTransaction = "signWalletTransaction",
   getAuthToken = "getAuthToken",
-  loginWithToken = "loginWithToken",
   registerInit = "registerInit",
   updateIframeScreenState = "updateIframeScreenState",
   parentErrorMessage = "parentErrorMessage",
@@ -41,12 +41,14 @@ export enum MessageActionsResponses {
   loginSuccess = "loginSuccess",
   logoutSuccess = "logoutSuccess",
   updateIframeScreenStateSuccess = "updateIframeScreenStateSuccess",
+  signRegisterInitSuccess = "signRegisterInitSuccess",
+  loginWithTokenSuccess = "loginWithTokenSuccess",
+  createWalletSuccess = "createWalletSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
   errorMessage = "errorMessage",
   registered = "registered",
-  walletCreated = "walletCreated",
   walletsList = "walletsList",
 }
 export type MessageResponsePayload = {
@@ -54,7 +56,7 @@ export type MessageResponsePayload = {
   parentAction?: MessageParentActionsResponses;
   userAuthToken?: string;
   errorMessage?: string;
-  signedInitRegistration?: UserRegistrationResponse;
+  signedRegisterInitChallenge?: UserRegistrationResponse;
   userLoginResponse?: {
     token: string;
   };
@@ -99,5 +101,20 @@ export type ChangeIframeScreenProps = {
 };
 export type LoginProps = {
   userName: string;
+  showScreen?: IframeActiveState;
+};
+export type SignRegisterUserInitProps = {
+  userName: string;
+  challenge: UserRegistrationChallenge;
+  showScreen?: IframeActiveState;
+};
+export type LoginWithTokenProps = {
+  token: string;
+  showScreen?: IframeActiveState;
+};
+export type CreateWalletProps = {
+  userName: string;
+  walletName: string;
+  networkId: BlockchainNetwork;
   showScreen?: IframeActiveState;
 };

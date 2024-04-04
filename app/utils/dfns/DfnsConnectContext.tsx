@@ -1,8 +1,11 @@
+import { UserRegistrationResponse } from "@dfns/sdk";
 import { createContext } from "react";
 import {
   ChangeIframeScreenProps,
   LoginProps,
-  IframeActiveState,
+  SignRegisterUserInitProps,
+  LoginWithTokenProps,
+  CreateWalletProps,
 } from "@/app/utils/dfns/types";
 
 interface DfnsContextType {
@@ -13,6 +16,18 @@ interface DfnsContextType {
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;
   login: ({ userName, showScreen }: LoginProps) => void;
   logout: () => void;
+  signRegisterUserInit: ({
+    userName,
+    challenge,
+    showScreen,
+  }: SignRegisterUserInitProps) => Promise<UserRegistrationResponse>;
+  loginUserWithToken: ({ token }: LoginWithTokenProps) => void;
+  createWallet: ({
+    userName,
+    walletName,
+    networkId,
+    showScreen,
+  }: CreateWalletProps) => void;
 }
 
 const DfnsConnectContext = createContext<DfnsContextType | null>(null);

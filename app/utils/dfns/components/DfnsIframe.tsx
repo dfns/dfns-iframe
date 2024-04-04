@@ -65,7 +65,6 @@ export const DfnsIframe = ({
         }
       }
     } catch (e) {
-      console.log(e);
       console.error("Error getting iframe ready status");
     }
   }, [onReady, initialScreen, setIframeReady]);

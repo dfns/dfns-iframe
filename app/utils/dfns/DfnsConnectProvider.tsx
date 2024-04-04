@@ -6,12 +6,15 @@ import {
   sendMessageToIframe,
   IframeMessagePayload,
 } from "@/app/utils/dfns/windowMessage";
+import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 import {
   MessageActions,
   MessageActionsResponses,
   IframeActiveState,
   LoginProps,
-  ChangeIframeScreenProps,
+  SignRegisterUserInitProps,
+  LoginWithTokenProps,
+  CreateWalletProps,
 } from "@/app/utils/dfns/types";
 
 const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -51,6 +54,23 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
+  async function _loginUserWithToken({
+    token,
+    showScreen,
+  }: LoginWithTokenProps) {
+    if (!token) throw new Error("Missing Token");
+    try {
+      return await _sendMessageToIframe({
+        action: MessageActions.loginWithToken,
+        actionResponse: MessageActionsResponses.loginWithTokenSuccess,
+        token,
+        showScreen,
+      });
+    } catch (e) {
+      console.error("error logging out");
+    }
+  }
+
   async function _logout({
     showScreen,
   }: { showScreen?: IframeActiveState } = {}) {
@@ -65,12 +85,49 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
+  async function _signRegisterUserInit({
+    userName,
+    challenge,
+    showScreen,
+  }: SignRegisterUserInitProps) {
+    try {
+      return await _sendMessageToIframe({
+        action: MessageActions.signRegisterInit,
+        actionResponse: MessageActionsResponses.signRegisterInitSuccess,
+        userName,
+        challenge,
+        showScreen,
+      });
+    } catch (e) {
+      console.error("error logging out");
+    }
+  }
+
+  async function _createWallet({
+    userName,
+    walletName,
+    networkId,
+    showScreen,
+  }: CreateWalletProps) {
+    try {
+      return await _sendMessageToIframe({
+        action: MessageActions.createWallet,
+        actionResponse: MessageActionsResponses.createWalletSuccess,
+        userName,
+        walletName: "test wallet name",
+        networkId: BlockchainNetwork.EthereumSepolia,
+        showScreen,
+      });
+    } catch (e) {
+      console.error("error logging out");
+    }
+  }
+
   async function _changeIframeScreen({
     showScreen,
   }: { showScreen?: IframeActiveState } = {}) {
     if (!showScreen || !Object.values(IframeActiveState).includes(showScreen))
       return;
-    console.log("sene message to iframe show screen", showScreen);
     await _sendMessageToIframe({
       action: MessageActions.updateIframeScreenState,
       actionResponse: MessageActionsResponses.updateIframeScreenStateSuccess,
@@ -99,6 +156,9 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const login = requireIframeReady(_login);
   const logout = requireIframeReady(_logout);
   const changeIframeScreen = requireIframeReady(_changeIframeScreen);
+  const signRegisterUserInit = requireIframeReady(_signRegisterUserInit);
+  const loginUserWithToken = requireIframeReady(_loginUserWithToken);
+  const createWallet = requireIframeReady(_createWallet);
 
   const value = useMemo(
     () => ({
@@ -109,8 +169,19 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       changeIframeScreen,
       login,
       logout,
+      signRegisterUserInit,
+      loginUserWithToken,
+      createWallet,
     }),
-    [isConnectReady, login, logout, changeIframeScreen]
+    [
+      isConnectReady,
+      login,
+      logout,
+      changeIframeScreen,
+      signRegisterUserInit,
+      loginUserWithToken,
+      createWallet,
+    ]
   );
 
   return (

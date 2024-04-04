@@ -26,7 +26,6 @@ export const useServerRequests = () => {
       }
       return challenge;
     } catch (e) {
-      console.log("getRegisterInitChallenge:", e);
       throw e;
     }
   };
@@ -63,8 +62,6 @@ export const useServerRequests = () => {
         }),
       });
       const parsedResponse = await response.json();
-      console.log("delegatedLoginNewUser response:", { parsedResponse });
-
       return parsedResponse;
     } catch (e) {
       console.error(e.message);

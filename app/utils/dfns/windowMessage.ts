@@ -18,9 +18,16 @@ interface AlwaysOptionalPayload {
 export interface LoginPayload {
   userName?: string;
 }
+export interface LoginPayload {
+  userName?: string;
+}
+export interface LoginWithTokenPayload {
+  token?: string;
+}
 export interface IframeMessagePayload
   extends AlwaysRequiredPayload,
     AlwaysOptionalPayload,
+    LoginWithTokenPayload,
     LoginPayload {}
 
 export type MessageResponse = {
