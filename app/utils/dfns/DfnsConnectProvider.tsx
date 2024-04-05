@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useMemo, PropsWithChildren } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  PropsWithChildren,
+} from "react";
 import DfnsConnectContext from "@/app/utils/dfns/DfnsConnectContext";
 import {
   sendMessageToIframe,
@@ -10,6 +16,8 @@ import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 import {
   MessageActions,
   MessageActionsResponses,
+  MessageParentActions,
+  MessageParentActionsResponses,
   IframeActiveState,
   LoginProps,
   SignRegisterUserInitProps,
@@ -20,6 +28,8 @@ import {
 const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isIframeReady, setIsIframeReady] = useState(false);
+  const [requiredActionName, setRequiredActionName] =
+    useState<MessageParentActions>();
 
   const iframe: HTMLIFrameElement | null = iframeRef?.current
     ? iframeRef.current
@@ -114,8 +124,8 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
         action: MessageActions.createWallet,
         actionResponse: MessageActionsResponses.createWalletSuccess,
         userName,
-        walletName: "test wallet name",
-        networkId: BlockchainNetwork.EthereumSepolia,
+        walletName,
+        networkId,
         showScreen,
       });
     } catch (e) {
@@ -150,8 +160,38 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       ? iframeRef.current
       : null;
     if (!iframe) throw new Error("iframe is not ready to receive messages");
-    return await sendMessageToIframe(iframe, payload);
+    try {
+      const result = await sendMessageToIframe(iframe, payload);
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
+
+  useEffect(() => {
+    if (!iframe || !isIframeReady) return;
+    const handleIframeMessages = async (event: MessageEvent) => {
+      if (!iframe || event.source !== iframe.contentWindow) {
+        return;
+      }
+      const parentAction = event?.data?.parentAction || "";
+      if (
+        !parentAction ||
+        !Object.values(MessageParentActions).includes(parentAction)
+      ) {
+        return;
+      }
+      _sendMessageToIframe({
+        parentActionResponse: `${parentAction}Success` as Mess,
+      });
+      setRequiredActionName(parentAction);
+    };
+    window.addEventListener("message", handleIframeMessages, false);
+    return () => {
+      window.removeEventListener("message", handleIframeMessages, false);
+    };
+  }, [iframe, isIframeReady]);
 
   const login = requireIframeReady(_login);
   const logout = requireIframeReady(_logout);
@@ -164,6 +204,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     () => ({
       iframeRef,
       isConnectReady,
+      requiredActionName,
       setIframeRef,
       setIframeReady,
       changeIframeScreen,
@@ -175,6 +216,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }),
     [
       isConnectReady,
+      requiredActionName,
       login,
       logout,
       changeIframeScreen,

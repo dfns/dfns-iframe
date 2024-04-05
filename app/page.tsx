@@ -3,14 +3,30 @@
 import { useState } from "react";
 import { DfnsIframe } from "@/app/utils/dfns/components/DfnsIframe";
 import useDfnsConnect from "@/app/utils/dfns/useDfnsConnect";
-import { IframeActiveState } from "@/app/utils/dfns/types";
+import {
+  IframeActiveState,
+  MessageParentActions,
+} from "@/app/utils/dfns/types";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt111@dfns.co";
+const TEST_EMAIL = "rod+grvt129@dfns.co";
 
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
+
+  // actions initiated in the iframe that require
+  // the parent website to take action
+  async function onParentAction(parentAction: MessageParentActions) {
+    switch (parentAction) {
+      case MessageParentActions.initUserRegister:
+        createUserWithWallet();
+        return;
+      default:
+        return;
+    }
+  }
+
   const {
     isConnectReady,
     login,
@@ -18,7 +34,7 @@ export default function Home() {
     signRegisterUserInit,
     loginUserWithToken,
     createWallet,
-  } = useDfnsConnect();
+  } = useDfnsConnect(onParentAction);
 
   const {
     getRegisterInitChallenge,
@@ -26,7 +42,7 @@ export default function Home() {
     delegatedLoginNewUser,
   } = useServerRequests();
 
-  async function createUserInit() {
+  async function createUserWithWallet() {
     try {
       const challenge = await getRegisterInitChallenge(userName);
       const response = await signRegisterUserInit({
@@ -61,26 +77,10 @@ export default function Home() {
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
         onClick={async () => {
-          await login({ userName });
-        }}
-      >
-        login
-      </button>
-
-      <button
-        className="bg-black text-white p-4 rounded-lg m-2"
-        onClick={async () => {
           await logout();
         }}
       >
         logout
-      </button>
-
-      <button
-        className="bg-black text-white p-4 rounded-lg m-2"
-        onClick={createUserInit}
-      >
-        register
       </button>
 
       <label>

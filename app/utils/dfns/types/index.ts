@@ -86,14 +86,26 @@ export type MessagePayload = {
   networkId?: BlockchainNetwork;
 };
 
-export enum MessageParentActionsResponses {
+export enum MessageParentActions {
   initUserRegister = "initUserRegister",
+
   completeUserRegister = "completeUserRegister",
   userLoginSuccess = "userLoginSuccess",
   userLogoutSuccess = "userLogoutSuccess",
   userLoginWithTokenComplete = "userLoginWithTokenComplete",
   isWalletExists = "isWalletExists",
   error = "error",
+}
+
+export enum MessageParentActionsResponses {
+  initUserRegisterSuccess = "initUserRegisterSuccess",
+
+  completeUserRegisterSuccess = "completeUserRegisterSuccess",
+  userLoginSuccess = "userLoginSuccess",
+  userLogoutSuccess = "userLogoutSuccess",
+  userLoginWithTokenCompleteSuccess = "userLoginWithTokenCompleteSuccess",
+  isWalletExistsSuccess = "isWalletExistsSuccess",
+  error = "errorSuccess",
 }
 
 export type ChangeIframeScreenProps = {
