@@ -10,7 +10,7 @@ import {
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt129@dfns.co";
+const TEST_EMAIL = "rod+grvt136@dfns.co";
 
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
@@ -34,6 +34,7 @@ export default function Home() {
     signRegisterUserInit,
     loginUserWithToken,
     createWallet,
+    showUserCredentials,
   } = useDfnsConnect(onParentAction);
 
   const {
@@ -76,10 +77,16 @@ export default function Home() {
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
         onClick={() => {
-          logout();
+          logout({ showScreen: IframeActiveState.createUserAndWallet });
         }}
       >
         logout
+      </button>
+      <button
+        className="bg-black text-white p-4 rounded-lg m-2"
+        onClick={() => showUserCredentials()}
+      >
+        Show Credentials
       </button>
       <label>
         Username:

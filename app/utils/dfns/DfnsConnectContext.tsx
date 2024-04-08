@@ -3,6 +3,7 @@ import { createContext } from "react";
 import {
   ChangeIframeScreenProps,
   LoginProps,
+  LogoutProps,
   SignRegisterUserInitProps,
   LoginWithTokenProps,
   CreateWalletProps,
@@ -16,7 +17,7 @@ interface DfnsContextType {
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;
   login: ({ userName, showScreen }: LoginProps) => void;
-  logout: () => void;
+  logout: ({ showScreen }: LogoutProps) => void;
   signRegisterUserInit: ({
     userName,
     challenge,

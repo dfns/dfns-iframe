@@ -27,9 +27,10 @@ export enum MessageActions {
   signRegisterInit = "signRegisterInit",
   loginWithToken = "loginWithToken",
   createWallet = "createWallet",
-
   listWallets = "listWallets",
+  listUserCredentials = "listUserCredentials",
   userWalletExists = "userWalletExists",
+
   signWalletTransaction = "signWalletTransaction",
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
@@ -44,6 +45,7 @@ export enum MessageActionsResponses {
   signRegisterInitSuccess = "signRegisterInitSuccess",
   loginWithTokenSuccess = "loginWithTokenSuccess",
   createWalletSuccess = "createWalletSuccess",
+  listUserCredentialsSuccess = "listUserCredentialsSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -113,6 +115,9 @@ export type ChangeIframeScreenProps = {
 };
 export type LoginProps = {
   userName: string;
+  showScreen?: IframeActiveState;
+};
+export type LogoutProps = {
   showScreen?: IframeActiveState;
 };
 export type SignRegisterUserInitProps = {

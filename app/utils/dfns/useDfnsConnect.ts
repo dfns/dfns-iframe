@@ -4,7 +4,7 @@ import DfnsConnectContext from "@/app/utils/dfns/DfnsConnectContext";
 import { MessageParentActions } from "@/app/utils/dfns/types";
 
 export const useDfnsConnect = (
-  onParentAction: (parentAction: MessageParentActions) => void
+  onParentAction?: (parentAction: MessageParentActions) => void
 ) => {
   const context = useContext(DfnsConnectContext);
 

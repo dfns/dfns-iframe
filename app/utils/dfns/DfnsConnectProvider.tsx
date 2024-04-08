@@ -40,6 +40,18 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     iframeRef.current = ref;
   };
 
+  const _showIframeScreen = async (showScreen: IframeActiveState) => {
+    try {
+      await _sendMessageToIframe({
+        action: MessageActions.updateIframeScreenState,
+        actionResponse: MessageActionsResponses.updateIframeScreenStateSuccess,
+        showScreen,
+      });
+    } catch (e) {
+      console.error("error updating screen");
+    }
+  };
+
   const setIframeReady = () => {
     setIsIframeReady(true);
   };
@@ -145,6 +157,13 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     });
   }
 
+  async function _showUserCredentials() {
+    await _sendMessageToIframe({
+      action: MessageActions.listUserCredentials,
+      actionResponse: MessageActionsResponses.listUserCredentialsSuccess,
+    });
+  }
+
   function requireIframeReady<T extends AnyFunction>(originalFunction: T): T {
     return function (this: any, ...args: any[]) {
       if (!iframe || !isIframeReady) {
@@ -199,6 +218,8 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const signRegisterUserInit = requireIframeReady(_signRegisterUserInit);
   const loginUserWithToken = requireIframeReady(_loginUserWithToken);
   const createWallet = requireIframeReady(_createWallet);
+  const showIframeScreen = requireIframeReady(_showIframeScreen);
+  const showUserCredentials = requireIframeReady(_showUserCredentials);
 
   const value = useMemo(
     () => ({
@@ -210,9 +231,11 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       changeIframeScreen,
       login,
       logout,
+      showUserCredentials,
       signRegisterUserInit,
       loginUserWithToken,
       createWallet,
+      showIframeScreen,
     }),
     [
       isConnectReady,
@@ -221,8 +244,10 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       logout,
       changeIframeScreen,
       signRegisterUserInit,
+      showUserCredentials,
       loginUserWithToken,
       createWallet,
+      showIframeScreen,
     ]
   );
 
