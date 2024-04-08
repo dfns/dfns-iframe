@@ -26,6 +26,7 @@ export const useServerRequests = () => {
       }
       return challenge;
     } catch (e) {
+      console.log("error", e);
       throw e;
     }
   };

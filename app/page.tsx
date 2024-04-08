@@ -73,16 +73,14 @@ export default function Home() {
   return (
     <main className=" min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-col ">
       <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
-
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
-        onClick={async () => {
-          await logout();
+        onClick={() => {
+          logout();
         }}
       >
         logout
       </button>
-
       <label>
         Username:
         <input
@@ -94,7 +92,6 @@ export default function Home() {
           placeholder="username"
         />
       </label>
-
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
         <DfnsIframe initialScreen={IframeActiveState.userWallet} />
