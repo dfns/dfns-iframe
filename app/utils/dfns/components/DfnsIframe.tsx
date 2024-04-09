@@ -29,7 +29,7 @@ interface DfnsIframeProps {
 export const DfnsIframe = ({
   isVisible = true,
   iframeUrl = DFNS_IFRAME_URL,
-  iframeHeight = 400,
+  iframeHeight = 600,
   iframeWidth = 400,
   initialScreen = IframeActiveState.default,
   onLoad,

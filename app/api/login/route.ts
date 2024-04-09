@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import { dfns } from "../utils";
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const email = body.email;
 

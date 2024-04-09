@@ -31,7 +31,7 @@ export const useServerRequests = () => {
     }
   };
 
-  const addPermissionsToNewUser = async (user) => {
+  const addPermissionsToNewUser = async (user: any) => {
     try {
       if (!user) {
         throw new Error("user not set");
@@ -46,7 +46,7 @@ export const useServerRequests = () => {
 
       return response;
     } catch (e) {
-      console.error(e.message);
+      throw e;
     }
   };
 
@@ -65,7 +65,7 @@ export const useServerRequests = () => {
       const parsedResponse = await response.json();
       return parsedResponse;
     } catch (e) {
-      console.error(e.message);
+      throw e;
     }
   };
 

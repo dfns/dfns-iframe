@@ -12,7 +12,6 @@ import {
   sendMessageToIframe,
   IframeMessagePayload,
 } from "@/app/utils/dfns/windowMessage";
-import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 import {
   MessageActions,
   MessageActionsResponses,
@@ -37,6 +36,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const isConnectReady = !!iframe && isIframeReady;
 
   const setIframeRef = (ref: HTMLIFrameElement) => {
+    // @ts-expect-error
     iframeRef.current = ref;
   };
 
@@ -113,13 +113,14 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     showScreen,
   }: SignRegisterUserInitProps) {
     try {
-      return await _sendMessageToIframe({
+      const response = await _sendMessageToIframe({
         action: MessageActions.signRegisterInit,
         actionResponse: MessageActionsResponses.signRegisterInitSuccess,
         userName,
         challenge,
         showScreen,
       });
+      return response.signedRegisterInitChallenge;
     } catch (e) {
       console.error("error logging out");
     }
@@ -148,13 +149,16 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   async function _changeIframeScreen({
     showScreen,
   }: { showScreen?: IframeActiveState } = {}) {
+    console.log("_changeIframeScreen", showScreen);
     if (!showScreen || !Object.values(IframeActiveState).includes(showScreen))
       return;
+    console.log("sending to iframe");
     await _sendMessageToIframe({
       action: MessageActions.updateIframeScreenState,
       actionResponse: MessageActionsResponses.updateIframeScreenStateSuccess,
       showScreen,
     });
+    console.log("sent to iframe");
   }
 
   async function _showUserCredentials() {
@@ -202,7 +206,8 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
         return;
       }
       _sendMessageToIframe({
-        parentActionResponse: `${parentAction}Success` as Mess,
+        parentActionResponse:
+          `${parentAction}Success` as MessageParentActionsResponses,
       });
       setRequiredActionName(parentAction);
     };
@@ -252,6 +257,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
+    // @ts-expect-error
     <DfnsConnectContext.Provider value={value}>
       {children}
     </DfnsConnectContext.Provider>

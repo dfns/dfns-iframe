@@ -6,7 +6,7 @@ import {
   MessageParentActionsResponses,
 } from "@/app/utils/dfns/types";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
-import { UserRegistrationChallenge } from "@dfns/sdk";
+import { UserRegistrationChallenge, UserRegistrationResponse } from "@dfns/sdk";
 
 const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
@@ -32,13 +32,19 @@ export interface SignRegisterUserInitPayload {
   challenge?: UserRegistrationChallenge;
   showScreen?: IframeActiveState;
 }
+export interface SignRegisterUserInitPayload {
+  userName?: string;
+  challenge?: UserRegistrationChallenge;
+  showScreen?: IframeActiveState;
+  signedRegisterInitChallenge?: UserRegistrationResponse;
+}
 export interface LoginWithTokenPayload {
   token?: string;
 }
 export interface CreateWalletPayload {
-  userName: string;
-  walletName: string;
-  networkId: BlockchainNetwork;
+  userName?: string;
+  walletName?: string;
+  networkId?: BlockchainNetwork;
   showScreen?: IframeActiveState;
 }
 export interface IframeMessagePayload
@@ -46,10 +52,12 @@ export interface IframeMessagePayload
     AlwaysOptionalPayload,
     LoginWithTokenPayload,
     SignRegisterUserInitPayload,
+    CreateWalletPayload,
     LoginPayload {}
 
 export type MessageResponse = {
   actionResponse: MessageActionsResponses;
+  signedRegisterInitChallenge?: UserRegistrationResponse;
 };
 export const sendMessageToIframe = (
   iframe: HTMLIFrameElement,

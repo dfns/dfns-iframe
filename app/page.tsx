@@ -7,10 +7,11 @@ import {
   IframeActiveState,
   MessageParentActions,
 } from "@/app/utils/dfns/types";
+import { DfnsError, UserRegistrationResponse } from "@dfns/sdk";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt136@dfns.co";
+const TEST_EMAIL = "rod+grvt141@dfns.co";
 
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
@@ -21,6 +22,9 @@ export default function Home() {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
         createUserWithWallet();
+        return;
+      case MessageParentActions.login:
+        login({ userName, showScreen: IframeActiveState.credentialsList });
         return;
       default:
         return;
@@ -34,6 +38,7 @@ export default function Home() {
     signRegisterUserInit,
     loginUserWithToken,
     createWallet,
+    changeIframeScreen,
     showUserCredentials,
   } = useDfnsConnect(onParentAction);
 
@@ -50,7 +55,8 @@ export default function Home() {
         userName,
         challenge,
       });
-      const user = response.signedRegisterInitChallenge.user;
+      console.log("signRegisterUserInit createUserWithWallet", { response });
+      const user = response.user;
       await addPermissionsToNewUser(user);
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
@@ -64,7 +70,7 @@ export default function Home() {
         showScreen: IframeActiveState.userWallet,
       });
     } catch (e) {
-      if (e?.message === "User already exists.") {
+      if (e instanceof DfnsError && e.message === "User already exists.") {
         login({ userName, showScreen: IframeActiveState.createUserAndWallet });
       } else {
         console.error(e);
@@ -98,10 +104,32 @@ export default function Home() {
           }}
           placeholder="username"
         />
+        <button
+          className="bg-black text-white p-4 rounded-lg m-2"
+          onClick={() => {
+            login({ userName, showScreen: IframeActiveState.userWallet });
+          }}
+        >
+          login {userName}
+        </button>
       </label>
+
+      <select
+        onChange={(e) => {
+          changeIframeScreen({
+            showScreen: e.target.value as IframeActiveState,
+          });
+        }}
+      >
+        {Object.values(IframeActiveState).map((s, i) => (
+          <option value={s} key={i}>
+            {s}
+          </option>
+        ))}
+      </select>
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
-        <DfnsIframe initialScreen={IframeActiveState.userWallet} />
+        <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
       </div>
     </main>
   );

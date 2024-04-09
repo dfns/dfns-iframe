@@ -30,6 +30,7 @@ export enum MessageActions {
   listWallets = "listWallets",
   listUserCredentials = "listUserCredentials",
   userWalletExists = "userWalletExists",
+  createAdditionalCredential = "createAdditionalCredential",
 
   signWalletTransaction = "signWalletTransaction",
   getAuthToken = "getAuthToken",
@@ -46,6 +47,7 @@ export enum MessageActionsResponses {
   loginWithTokenSuccess = "loginWithTokenSuccess",
   createWalletSuccess = "createWalletSuccess",
   listUserCredentialsSuccess = "listUserCredentialsSuccess",
+  createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -90,6 +92,8 @@ export type MessagePayload = {
 
 export enum MessageParentActions {
   initUserRegister = "initUserRegister",
+  login = "login",
+  handleError = "handleError",
 
   completeUserRegister = "completeUserRegister",
   userLoginSuccess = "userLoginSuccess",
@@ -101,6 +105,8 @@ export enum MessageParentActions {
 
 export enum MessageParentActionsResponses {
   initUserRegisterSuccess = "initUserRegisterSuccess",
+  loginSuccess = "loginSuccess",
+  handleErrorSuccess = "handleErrorSuccess",
 
   completeUserRegisterSuccess = "completeUserRegisterSuccess",
   userLoginSuccess = "userLoginSuccess",

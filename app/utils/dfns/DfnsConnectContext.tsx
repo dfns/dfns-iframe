@@ -5,6 +5,7 @@ import {
   LoginProps,
   LogoutProps,
   SignRegisterUserInitProps,
+  IframeActiveState,
   LoginWithTokenProps,
   CreateWalletProps,
 } from "@/app/utils/dfns/types";
@@ -18,6 +19,7 @@ interface DfnsContextType {
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;
   login: ({ userName, showScreen }: LoginProps) => void;
   logout: ({ showScreen }: LogoutProps) => void;
+  showUserCredentials: () => void;
   signRegisterUserInit: ({
     userName,
     challenge,
@@ -30,6 +32,7 @@ interface DfnsContextType {
     networkId,
     showScreen,
   }: CreateWalletProps) => void;
+  showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
 }
 
 const DfnsConnectContext = createContext<DfnsContextType | null>(null);
