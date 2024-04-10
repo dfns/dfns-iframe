@@ -35,7 +35,7 @@ export const DfnsIframe = ({
   onLoad,
   onReady,
 }: DfnsIframeProps) => {
-  const { setIframeRef, setIframeReady, changeIframeScreen } = useDfnsConnect();
+  const { setIframeRef, setIframeReady, showIframeScreen } = useDfnsConnect();
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const intervalId = useRef<number>(0);
@@ -75,8 +75,8 @@ export const DfnsIframe = ({
     const showScreen = initialScreen
       ? initialScreen
       : IframeActiveState.default;
-    changeIframeScreen({ showScreen });
-  }, [initialScreen, isIframeReady, changeIframeScreen]);
+    await showIframeScreen({ showScreen });
+  }, [initialScreen, isIframeReady, showIframeScreen]);
 
   useEffect(() => {
     if (!isIframeReady || !initialScreen) return;

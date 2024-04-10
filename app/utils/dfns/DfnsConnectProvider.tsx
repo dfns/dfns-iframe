@@ -40,7 +40,11 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     iframeRef.current = ref;
   };
 
-  const _showIframeScreen = async (showScreen: IframeActiveState) => {
+  const _showIframeScreen = async ({
+    showScreen,
+  }: {
+    showScreen: IframeActiveState;
+  }) => {
     try {
       await _sendMessageToIframe({
         action: MessageActions.updateIframeScreenState,
@@ -56,10 +60,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setIsIframeReady(true);
   };
 
-  async function _login({
-    userName,
-    showScreen = IframeActiveState.createUserAndWallet,
-  }: LoginProps) {
+  async function _login({ userName, showScreen }: LoginProps) {
     if (!userName) {
       console.error("Username required to attempt login");
       return;
@@ -146,21 +147,6 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
-  async function _changeIframeScreen({
-    showScreen,
-  }: { showScreen?: IframeActiveState } = {}) {
-    console.log("_changeIframeScreen", showScreen);
-    if (!showScreen || !Object.values(IframeActiveState).includes(showScreen))
-      return;
-    console.log("sending to iframe");
-    await _sendMessageToIframe({
-      action: MessageActions.updateIframeScreenState,
-      actionResponse: MessageActionsResponses.updateIframeScreenStateSuccess,
-      showScreen,
-    });
-    console.log("sent to iframe");
-  }
-
   async function _showUserCredentials() {
     await _sendMessageToIframe({
       action: MessageActions.listUserCredentials,
@@ -187,7 +173,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       const result = await sendMessageToIframe(iframe, payload);
       return result;
     } catch (e) {
-      console.error(e);
+      console.error("_sendMessageToIframe", e);
       throw e;
     }
   }
@@ -219,7 +205,6 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const login = requireIframeReady(_login);
   const logout = requireIframeReady(_logout);
-  const changeIframeScreen = requireIframeReady(_changeIframeScreen);
   const signRegisterUserInit = requireIframeReady(_signRegisterUserInit);
   const loginUserWithToken = requireIframeReady(_loginUserWithToken);
   const createWallet = requireIframeReady(_createWallet);
@@ -233,7 +218,6 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       requiredActionName,
       setIframeRef,
       setIframeReady,
-      changeIframeScreen,
       login,
       logout,
       showUserCredentials,
@@ -247,7 +231,6 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       requiredActionName,
       login,
       logout,
-      changeIframeScreen,
       signRegisterUserInit,
       showUserCredentials,
       loginUserWithToken,

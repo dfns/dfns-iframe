@@ -7,11 +7,12 @@ import {
   IframeActiveState,
   MessageParentActions,
 } from "@/app/utils/dfns/types";
-import { DfnsError, UserRegistrationResponse } from "@dfns/sdk";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt141@dfns.co";
+const TEST_EMAIL = "rod+grvt348@dfns.co";
+
+// restart user registration challenge
 
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
@@ -21,16 +22,18 @@ export default function Home() {
   async function onParentAction(parentAction: MessageParentActions) {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
-        createUserWithWallet();
+        await createUserWithWallet();
         return;
       case MessageParentActions.login:
-        login({ userName, showScreen: IframeActiveState.credentialsList });
+        await login({
+          userName,
+          showScreen: IframeActiveState.credentialsList,
+        });
         return;
       default:
         return;
     }
   }
-
   const {
     isConnectReady,
     login,
@@ -38,7 +41,7 @@ export default function Home() {
     signRegisterUserInit,
     loginUserWithToken,
     createWallet,
-    changeIframeScreen,
+    // changeIframeScreen,
     showUserCredentials,
   } = useDfnsConnect(onParentAction);
 
@@ -55,14 +58,13 @@ export default function Home() {
         userName,
         challenge,
       });
-      console.log("signRegisterUserInit createUserWithWallet", { response });
       const user = response.user;
       await addPermissionsToNewUser(user);
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
         token,
+        showScreen: IframeActiveState.userWallet,
       });
-      // create wallet
       await createWallet({
         userName,
         walletName: "testWallet1",
@@ -70,27 +72,32 @@ export default function Home() {
         showScreen: IframeActiveState.userWallet,
       });
     } catch (e) {
-      if (e instanceof DfnsError && e.message === "User already exists.") {
-        login({ userName, showScreen: IframeActiveState.createUserAndWallet });
+      const error = e as Error;
+      if (error.message === "User already exists.") {
+        console.log("----try login");
+        await login({
+          userName,
+        });
       } else {
-        console.error(e);
+        console.error(error);
       }
     }
   }
+
   return (
     <main className=" min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-col ">
       <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
-        onClick={() => {
-          logout({ showScreen: IframeActiveState.createUserAndWallet });
+        onClick={async () => {
+          await logout({ showScreen: IframeActiveState.createUserAndWallet });
         }}
       >
         logout
       </button>
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
-        onClick={() => showUserCredentials()}
+        onClick={async () => await showUserCredentials()}
       >
         Show Credentials
       </button>
@@ -106,15 +113,15 @@ export default function Home() {
         />
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
-          onClick={() => {
-            login({ userName, showScreen: IframeActiveState.userWallet });
+          onClick={async () => {
+            await login({ userName, showScreen: IframeActiveState.userWallet });
           }}
         >
           login {userName}
         </button>
       </label>
 
-      <select
+      {/* <select
         onChange={(e) => {
           changeIframeScreen({
             showScreen: e.target.value as IframeActiveState,
@@ -126,7 +133,7 @@ export default function Home() {
             {s}
           </option>
         ))}
-      </select>
+      </select> */}
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
         <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
