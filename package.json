@@ -6,6 +6,7 @@
   "scripts": {
     "domain": "node --trace-warnings --loader ts-node/esm app/server/server.ts",
     "dev": "next dev -p 3001",
+    "devs": "next dev -p 3001 --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   try {
     const registrationChallenge =
-      await dfns.auth.createDelegatedUserRegistration({
+      await dfns.auth.createDelegatedRegistrationChallenge({
         body: { email, kind },
       });
     return NextResponse.json(registrationChallenge, {
