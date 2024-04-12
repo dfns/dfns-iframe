@@ -10,9 +10,7 @@ import {
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt348@dfns.co";
-
-// restart user registration challenge
+const TEST_EMAIL = "rod+grvt353@dfns.co";
 
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
@@ -47,13 +45,14 @@ export default function Home() {
 
   const {
     getRegisterInitChallenge,
+    getRestartRegisterInitChallenge,
     addPermissionsToNewUser,
     delegatedLoginNewUser,
   } = useServerRequests();
 
   async function createUserWithWallet() {
     try {
-      const challenge = await getRegisterInitChallenge(userName);
+      const challenge = await getChallengeOrLogin(userName);
       const response = await signRegisterUserInit({
         userName,
         challenge,
@@ -72,14 +71,35 @@ export default function Home() {
         showScreen: IframeActiveState.userWallet,
       });
     } catch (e) {
+      console.log("createUserWithWallet error", e);
+    }
+  }
+
+  async function getChallengeOrLogin(username: string) {
+    try {
+      console.log("try getRegisterInitChallenge");
+      // new user
+      const challenge = await getRegisterInitChallenge(userName);
+      return challenge;
+    } catch (e) {
       const error = e as Error;
       if (error.message === "User already exists.") {
-        console.log("----try login");
-        await login({
-          userName,
-        });
-      } else {
-        console.error(error);
+        try {
+          console.log("try getRestartRegisterInitChallenge");
+          // user has not signed previous challenges
+          const challenge = await getRestartRegisterInitChallenge(username);
+          return challenge;
+        } catch (e) {
+          console.log("----try login", e);
+          try {
+            // user is already registered
+            await login({ userName, showScreen: IframeActiveState.userWallet });
+            throw new Error("User Exists log in instead of register");
+          } catch (e) {
+            console.log("----pure failure");
+            throw e;
+          }
+        }
       }
     }
   }
