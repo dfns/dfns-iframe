@@ -25,6 +25,30 @@ export const useServerRequests = () => {
     }
   };
 
+  const getRestartRegisterInitChallenge = async (userName: string) => {
+    try {
+      if (!userName) {
+        throw new Error("Username not set");
+      }
+      const response = await fetch("/api/register/restart", {
+        method: "POST",
+        body: JSON.stringify({
+          email: userName,
+          kind: UserAuthKind.EndUser,
+        }),
+      });
+
+      const challenge = await response.json();
+      if (challenge.ok === false) {
+        throw new Error(challenge.error || "Unknown error");
+      }
+      return challenge;
+    } catch (e) {
+      console.log("error", e);
+      throw e;
+    }
+  };
+
   const addPermissionsToNewUser = async (user: any) => {
     try {
       if (!user) {
@@ -63,6 +87,7 @@ export const useServerRequests = () => {
 
   return {
     getRegisterInitChallenge,
+    getRestartRegisterInitChallenge,
     addPermissionsToNewUser,
     delegatedLoginNewUser,
   };
