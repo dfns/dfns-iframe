@@ -1,10 +1,16 @@
 "use client";
 import { useContext, useEffect } from "react";
 import DfnsConnectContext from "@/app/utils/dfns/DfnsConnectContext";
-import { MessageParentActions } from "@/app/utils/dfns/types";
+import {
+  MessageParentActionPayload,
+  MessageParentActions,
+} from "@/app/utils/dfns/types";
 
 export const useDfnsConnect = (
-  onParentAction?: (parentAction: MessageParentActions) => void
+  onParentAction?: (
+    parentAction: MessageParentActions,
+    payload: MessageParentActionPayload
+  ) => void
 ) => {
   const context = useContext(DfnsConnectContext);
 
@@ -14,9 +20,16 @@ export const useDfnsConnect = (
 
   useEffect(() => {
     if (!!context?.requiredActionName && onParentAction) {
-      onParentAction(context?.requiredActionName as MessageParentActions);
+      onParentAction(
+        context?.requiredActionName as MessageParentActions,
+        context?.requiredActionPayload
+      );
     }
-  }, [context?.requiredActionName, onParentAction]);
+  }, [
+    context?.requiredActionName,
+    context?.requiredActionPayload,
+    onParentAction,
+  ]);
 
   return context;
 };

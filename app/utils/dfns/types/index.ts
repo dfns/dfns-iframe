@@ -103,6 +103,10 @@ export enum MessageParentActions {
   error = "error",
 }
 
+export type MessageParentActionPayload = {
+  showScreen?: IframeActiveState;
+};
+
 export enum MessageParentActionsResponses {
   initUserRegisterSuccess = "initUserRegisterSuccess",
   loginSuccess = "loginSuccess",

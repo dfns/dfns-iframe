@@ -17,6 +17,7 @@ import {
   MessageActionsResponses,
   MessageParentActions,
   MessageParentActionsResponses,
+  MessageParentActionPayload,
   IframeActiveState,
   LoginProps,
   SignRegisterUserInitProps,
@@ -27,8 +28,11 @@ import {
 const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isIframeReady, setIsIframeReady] = useState(false);
+
   const [requiredActionName, setRequiredActionName] =
     useState<MessageParentActions>();
+  const [requiredActionPayload, setRequiredActionPayload] =
+    useState<MessageParentActionPayload>();
 
   const iframe: HTMLIFrameElement | null = iframeRef?.current
     ? iframeRef.current
@@ -195,7 +199,10 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
         parentActionResponse:
           `${parentAction}Success` as MessageParentActionsResponses,
       });
+      console.log("event.data", event.data);
+      const showScreen = event?.data?.showScreen || "";
       setRequiredActionName(parentAction);
+      setRequiredActionPayload(showScreen);
     };
     window.addEventListener("message", handleIframeMessages, false);
     return () => {
@@ -216,6 +223,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
       iframeRef,
       isConnectReady,
       requiredActionName,
+      requiredActionPayload,
       setIframeRef,
       setIframeReady,
       login,
@@ -229,6 +237,7 @@ const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
     [
       isConnectReady,
       requiredActionName,
+      requiredActionPayload,
       login,
       logout,
       signRegisterUserInit,

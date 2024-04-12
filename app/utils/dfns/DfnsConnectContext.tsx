@@ -8,12 +8,14 @@ import {
   IframeActiveState,
   LoginWithTokenProps,
   CreateWalletProps,
+  MessageParentActionPayload,
 } from "@/app/utils/dfns/types";
 
 interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   isConnectReady: boolean;
   requiredActionName: string;
+  requiredActionPayload: MessageParentActionPayload;
   setIframeRef: (iframe: HTMLIFrameElement) => void;
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;

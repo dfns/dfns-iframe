@@ -15,9 +15,10 @@ const TEST_EMAIL = "rod+grvt353@dfns.co";
 export default function Home() {
   const [userName, setUserName] = useState(TEST_EMAIL);
 
-  // actions initiated in the iframe that require
-  // the parent website to take action
-  async function onParentAction(parentAction: MessageParentActions) {
+  async function onParentAction(
+    parentAction: MessageParentActions,
+    showScreen: IframeActiveState
+  ) {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
         await createUserWithWallet();
@@ -25,7 +26,7 @@ export default function Home() {
       case MessageParentActions.login:
         await login({
           userName,
-          showScreen: IframeActiveState.credentialsList,
+          showScreen,
         });
         return;
       default:
@@ -156,7 +157,7 @@ export default function Home() {
       </select> */}
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
-        <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
+        <DfnsIframe initialScreen={IframeActiveState.credentialsList} />
       </div>
     </main>
   );
