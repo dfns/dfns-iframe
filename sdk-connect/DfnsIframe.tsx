@@ -1,17 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { sendMessageToIframe } from "@/app/utils/dfns/windowMessage";
-import {
-  MessageActions,
-  MessageActionsResponses,
-  IframeActiveState,
-} from "@/app/utils/dfns/types";
-import useDfnsConnect from "@/app/utils/dfns/useDfnsConnect";
+import { IframeActiveState, MessageActions, MessageActionsResponses } from ".";
+import useDfnsConnect from "./useDfnsConnect";
+import { sendMessageToIframe } from "./windowMessage";
 
 const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 
-interface DfnsIframeProps {
+export interface DfnsIframeProps {
   isVisible?: boolean;
   iframeUrl?: string;
   iframeHeight?: number;

@@ -1,10 +1,8 @@
 "use client";
 import { useContext, useEffect } from "react";
-import DfnsConnectContext from "@/app/utils/dfns/DfnsConnectContext";
-import {
-  MessageParentActionPayload,
-  MessageParentActions,
-} from "@/app/utils/dfns/types";
+import DfnsConnectContext from "./DfnsConnectContext";
+import { MessageParentActionPayload, MessageParentActions } from ".";
+
 
 export const useDfnsConnect = (
   onParentAction?: (
