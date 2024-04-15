@@ -7,25 +7,12 @@ import React, {
   useMemo,
   PropsWithChildren,
 } from "react";
-import DfnsConnectContext from "@/app/utils/dfns/DfnsConnectContext";
-import {
-  sendMessageToIframe,
-  IframeMessagePayload,
-} from "@/app/utils/dfns/windowMessage";
-import {
-  MessageActions,
-  MessageActionsResponses,
-  MessageParentActions,
-  MessageParentActionsResponses,
-  MessageParentActionPayload,
-  IframeActiveState,
-  LoginProps,
-  SignRegisterUserInitProps,
-  LoginWithTokenProps,
-  CreateWalletProps,
-} from "@/app/utils/dfns/types";
+import { CreateWalletProps, IframeActiveState, LoginProps, LoginWithTokenProps, MessageActions, MessageActionsResponses, MessageParentActionPayload, MessageParentActions, MessageParentActionsResponses, SignRegisterUserInitProps } from ".";
+import DfnsConnectContext from "./DfnsConnectContext";
+import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
 
-const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
+
+export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isIframeReady, setIsIframeReady] = useState(false);
 

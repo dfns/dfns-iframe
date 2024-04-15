@@ -1,12 +1,6 @@
-import {
-  MessageActions,
-  MessageActionsResponses,
-  IframeActiveState,
-  MessageParentActions,
-  MessageParentActionsResponses,
-} from "@/app/utils/dfns/types";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 import { UserRegistrationChallenge, UserRegistrationResponse } from "@dfns/sdk";
+import { MessageActions, MessageActionsResponses, MessageParentActions, MessageParentActionsResponses, IframeActiveState } from ".";
 
 const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
@@ -49,11 +43,11 @@ export interface CreateWalletPayload {
 }
 export interface IframeMessagePayload
   extends EssentialPayload,
-    AlwaysOptionalPayload,
-    LoginWithTokenPayload,
-    SignRegisterUserInitPayload,
-    CreateWalletPayload,
-    LoginPayload {}
+  AlwaysOptionalPayload,
+  LoginWithTokenPayload,
+  SignRegisterUserInitPayload,
+  CreateWalletPayload,
+  LoginPayload { }
 
 export type MessageResponse = {
   actionResponse: MessageActionsResponses;

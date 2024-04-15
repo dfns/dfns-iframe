@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { DfnsConnectProvider } from "@/app/utils/dfns";
+import { DfnsConnectProvider } from "@dfns/sdk-connect/sdk-connect/DfnsConnectProvider";
 import "./globals.css";
+import { PropsWithChildren, ReactElement } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

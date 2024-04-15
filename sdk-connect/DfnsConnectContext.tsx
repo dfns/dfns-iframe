@@ -9,9 +9,9 @@ import {
   LoginWithTokenProps,
   CreateWalletProps,
   MessageParentActionPayload,
-} from "@/app/utils/dfns/types";
+} from ".";
 
-interface DfnsContextType {
+export interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   isConnectReady: boolean;
   requiredActionName: string;

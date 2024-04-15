@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { DfnsIframe } from "@/app/utils/dfns/components/DfnsIframe";
-import useDfnsConnect from "@/app/utils/dfns/useDfnsConnect";
+import { DfnsIframe } from "@dfns/sdk-connect/sdk-connect/DfnsIframe";
+import useDfnsConnect from "@dfns/sdk-connect/sdk-connect/useDfnsConnect";
 import {
   IframeActiveState,
+  MessageParentActionPayload,
   MessageParentActions,
-} from "@/app/utils/dfns/types";
+} from "@dfns/sdk-connect/sdk-connect";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
@@ -17,13 +18,14 @@ export default function Home() {
 
   async function onParentAction(
     parentAction: MessageParentActions,
-    showScreen: IframeActiveState
+    payload: MessageParentActionPayload
   ) {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
         await createUserWithWallet();
         return;
       case MessageParentActions.login:
+        const showScreen = payload.showScreen || IframeActiveState.default;
         await login({
           userName,
           showScreen,
@@ -142,22 +144,9 @@ export default function Home() {
         </button>
       </label>
 
-      {/* <select
-        onChange={(e) => {
-          changeIframeScreen({
-            showScreen: e.target.value as IframeActiveState,
-          });
-        }}
-      >
-        {Object.values(IframeActiveState).map((s, i) => (
-          <option value={s} key={i}>
-            {s}
-          </option>
-        ))}
-      </select> */}
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
-        <DfnsIframe initialScreen={IframeActiveState.credentialsList} />
+        <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
       </div>
     </main>
   );
