@@ -11,10 +11,8 @@ import {
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
-const TEST_EMAIL = "rod+grvt353@dfns.co";
-
 export default function Home() {
-  const [userName, setUserName] = useState(TEST_EMAIL);
+  const [userName, setUserName] = useState("");
 
   async function onParentAction(
     parentAction: MessageParentActions,
