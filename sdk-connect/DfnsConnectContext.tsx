@@ -16,6 +16,7 @@ export interface DfnsContextType {
   isConnectReady: boolean;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
+  signedTransaction: any;
   setIframeRef: (iframe: HTMLIFrameElement) => void;
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;
@@ -34,6 +35,7 @@ export interface DfnsContextType {
     networkId,
     showScreen,
   }: CreateWalletProps) => void;
+  signTransaction: ({ transactionPayload }) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
 }
 

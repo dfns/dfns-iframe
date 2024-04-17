@@ -7,12 +7,24 @@ import React, {
   useMemo,
   PropsWithChildren,
 } from "react";
-import { CreateWalletProps, IframeActiveState, LoginProps, LoginWithTokenProps, MessageActions, MessageActionsResponses, MessageParentActionPayload, MessageParentActions, MessageParentActionsResponses, SignRegisterUserInitProps } from ".";
+import {
+  CreateWalletProps,
+  IframeActiveState,
+  LoginProps,
+  LoginWithTokenProps,
+  MessageActions,
+  MessageActionsResponses,
+  MessageParentActionPayload,
+  MessageParentActions,
+  MessageParentActionsResponses,
+  SignRegisterUserInitProps,
+} from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
 
-
-export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isIframeReady, setIsIframeReady] = useState(false);
 
@@ -20,6 +32,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
     useState<MessageParentActions>();
   const [requiredActionPayload, setRequiredActionPayload] =
     useState<MessageParentActionPayload>();
+  const [signedTransaction, setSignedTransaction] = useState(null);
 
   const iframe: HTMLIFrameElement | null = iframeRef?.current
     ? iframeRef.current
@@ -145,6 +158,14 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
     });
   }
 
+  async function _signTransaction({ transactionPayload }) {
+    return await _sendMessageToIframe({
+      action: MessageActions.signWalletTransaction,
+      actionResponse: MessageActionsResponses.signWalletTransactionSuccess,
+      transactionPayload,
+    });
+  }
+
   function requireIframeReady<T extends AnyFunction>(originalFunction: T): T {
     return function (this: any, ...args: any[]) {
       if (!iframe || !isIframeReady) {
@@ -186,10 +207,11 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
         parentActionResponse:
           `${parentAction}Success` as MessageParentActionsResponses,
       });
-      console.log("event.data", event.data);
       const showScreen = event?.data?.showScreen || "";
       setRequiredActionName(parentAction);
       setRequiredActionPayload(showScreen);
+      const signedTransaction = event?.data?.signedTransaction;
+      setSignedTransaction(signedTransaction);
     };
     window.addEventListener("message", handleIframeMessages, false);
     return () => {
@@ -202,6 +224,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
   const signRegisterUserInit = requireIframeReady(_signRegisterUserInit);
   const loginUserWithToken = requireIframeReady(_loginUserWithToken);
   const createWallet = requireIframeReady(_createWallet);
+  const signTransaction = requireIframeReady(_signTransaction);
   const showIframeScreen = requireIframeReady(_showIframeScreen);
   const showUserCredentials = requireIframeReady(_showUserCredentials);
 
@@ -211,6 +234,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
+      signedTransaction,
       setIframeRef,
       setIframeReady,
       login,
@@ -219,12 +243,14 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({ children }) =
       signRegisterUserInit,
       loginUserWithToken,
       createWallet,
+      signTransaction,
       showIframeScreen,
     }),
     [
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
+      signedTransaction,
       login,
       logout,
       signRegisterUserInit,

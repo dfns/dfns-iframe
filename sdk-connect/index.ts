@@ -18,6 +18,7 @@ export enum IframeActiveState {
   credentialsList = "credentialsList",
   parentErrorMessage = "parentErrorMessage",
   userWallet = "userWallet",
+  waiting = "waiting",
 }
 
 export enum MessageActions {
@@ -31,8 +32,8 @@ export enum MessageActions {
   listUserCredentials = "listUserCredentials",
   userWalletExists = "userWalletExists",
   createAdditionalCredential = "createAdditionalCredential",
-
   signWalletTransaction = "signWalletTransaction",
+
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
   updateIframeScreenState = "updateIframeScreenState",
@@ -48,6 +49,7 @@ export enum MessageActionsResponses {
   createWalletSuccess = "createWalletSuccess",
   listUserCredentialsSuccess = "listUserCredentialsSuccess",
   createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
+  signWalletTransactionSuccess = "signWalletTransactionSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -94,6 +96,7 @@ export enum MessageParentActions {
   initUserRegister = "initUserRegister",
   login = "login",
   handleError = "handleError",
+  handleSignedTransaction = "handleSignedTransaction",
 
   completeUserRegister = "completeUserRegister",
   userLoginSuccess = "userLoginSuccess",
@@ -111,6 +114,7 @@ export enum MessageParentActionsResponses {
   initUserRegisterSuccess = "initUserRegisterSuccess",
   loginSuccess = "loginSuccess",
   handleErrorSuccess = "handleErrorSuccess",
+  handleSignedTransactionSuccess = "handleSignedTransactionSuccess",
 
   completeUserRegisterSuccess = "completeUserRegisterSuccess",
   userLoginSuccess = "userLoginSuccess",

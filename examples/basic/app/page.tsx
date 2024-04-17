@@ -12,18 +12,22 @@ import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
 export default function Home() {
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("rod+grvt917@dfns.co");
 
   async function onParentAction(
     parentAction: MessageParentActions,
-    payload: MessageParentActionPayload
+    payload?: MessageParentActionPayload,
+    signedTransaction?: any
   ) {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
         await createUserWithWallet();
         return;
+      case MessageParentActions.handleSignedTransaction:
+        console.log("receiveSignedTransaction", signedTransaction);
+        return;
       case MessageParentActions.login:
-        const showScreen = payload.showScreen || IframeActiveState.default;
+        const showScreen = payload?.showScreen || IframeActiveState.default;
         await login({
           userName,
           showScreen,
@@ -40,7 +44,7 @@ export default function Home() {
     signRegisterUserInit,
     loginUserWithToken,
     createWallet,
-    // changeIframeScreen,
+    signTransaction,
     showUserCredentials,
   } = useDfnsConnect(onParentAction);
 
@@ -63,7 +67,7 @@ export default function Home() {
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
         token,
-        showScreen: IframeActiveState.userWallet,
+        showScreen: IframeActiveState.waiting,
       });
       await createWallet({
         userName,
@@ -78,26 +82,19 @@ export default function Home() {
 
   async function getChallengeOrLogin(username: string) {
     try {
-      console.log("try getRegisterInitChallenge");
-      // new user
       const challenge = await getRegisterInitChallenge(userName);
       return challenge;
     } catch (e) {
       const error = e as Error;
       if (error.message === "User already exists.") {
         try {
-          console.log("try getRestartRegisterInitChallenge");
-          // user has not signed previous challenges
           const challenge = await getRestartRegisterInitChallenge(username);
           return challenge;
         } catch (e) {
-          console.log("----try login", e);
           try {
-            // user is already registered
             await login({ userName, showScreen: IframeActiveState.userWallet });
             throw new Error("User Exists log in instead of register");
           } catch (e) {
-            console.log("----pure failure");
             throw e;
           }
         }
@@ -141,6 +138,49 @@ export default function Home() {
           login {userName}
         </button>
       </label>
+
+      <button
+        className="bg-black text-white p-4 rounded-lg m-2"
+        onClick={async () => {
+          const signedTransaction = await signTransaction({
+            transactionPayload: {
+              kind: "Eip712",
+              types: {
+                Person: [
+                  { name: "name", type: "string" },
+                  { name: "wallet", type: "address" },
+                ],
+                Mail: [
+                  { name: "from", type: "Person" },
+                  { name: "to", type: "Person" },
+                  { name: "contents", type: "string" },
+                ],
+              },
+              domain: {
+                name: "Ether Mail",
+                version: "1",
+                chainId: 1,
+                verifyingContract: "0x1b352de7a926ebd1bf52194dab487c2cb0793a9b",
+                salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558",
+              },
+              message: {
+                from: {
+                  name: "Chris",
+                  wallet: "0x00e3495cf6af59008f22ffaf32d4c92ac33dac47",
+                },
+                to: {
+                  name: "Bob",
+                  wallet: "0xcc0ee1a1c5e788b61916c8f1c96c960f9a9d3db7",
+                },
+                contents: "Hello, Bob!",
+              },
+            },
+          });
+          console.log("parent signedTransaction", signedTransaction);
+        }}
+      >
+        Sign transaction
+      </button>
 
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
       <div className="border-8 border-sky-500 w-[420px]">
