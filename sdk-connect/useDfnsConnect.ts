@@ -19,8 +19,7 @@ export const useDfnsConnect = (
     if (!!context?.requiredActionName && onParentAction) {
       onParentAction(
         context?.requiredActionName as MessageParentActions,
-        context?.requiredActionPayload,
-        context?.signedTransaction
+        context?.requiredActionPayload
       );
     }
   }, [

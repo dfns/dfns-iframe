@@ -18,6 +18,7 @@ import {
   MessageParentActions,
   MessageParentActionsResponses,
   SignRegisterUserInitProps,
+  TransactionPayload,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
@@ -32,7 +33,6 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     useState<MessageParentActions>();
   const [requiredActionPayload, setRequiredActionPayload] =
     useState<MessageParentActionPayload>();
-  const [signedTransaction, setSignedTransaction] = useState(null);
 
   const iframe: HTMLIFrameElement | null = iframeRef?.current
     ? iframeRef.current
@@ -56,7 +56,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
         showScreen,
       });
     } catch (e) {
-      console.error("error updating screen");
+      console.error("Error updating Iframe screen");
     }
   };
 
@@ -158,7 +158,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     });
   }
 
-  async function _signTransaction({ transactionPayload }) {
+  async function _signTransaction(transactionPayload: TransactionPayload) {
     return await _sendMessageToIframe({
       action: MessageActions.signWalletTransaction,
       actionResponse: MessageActionsResponses.signWalletTransactionSuccess,
@@ -211,7 +211,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       setRequiredActionName(parentAction);
       setRequiredActionPayload(showScreen);
       const signedTransaction = event?.data?.signedTransaction;
-      setSignedTransaction(signedTransaction);
+      setRequiredActionPayload(signedTransaction);
     };
     window.addEventListener("message", handleIframeMessages, false);
     return () => {
@@ -234,7 +234,6 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
-      signedTransaction,
       setIframeRef,
       setIframeReady,
       login,
@@ -250,7 +249,6 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
-      signedTransaction,
       login,
       logout,
       signRegisterUserInit,

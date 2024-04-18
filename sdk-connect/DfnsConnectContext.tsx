@@ -9,8 +9,8 @@ import {
   LoginWithTokenProps,
   CreateWalletProps,
   MessageParentActionPayload,
+  TransactionPayload,
 } from ".";
-
 export interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   isConnectReady: boolean;
@@ -35,7 +35,7 @@ export interface DfnsContextType {
     networkId,
     showScreen,
   }: CreateWalletProps) => void;
-  signTransaction: ({ transactionPayload }) => void;
+  signTransaction: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
 }
 

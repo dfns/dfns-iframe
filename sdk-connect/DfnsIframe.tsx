@@ -33,6 +33,8 @@ export const DfnsIframe = ({
 }: DfnsIframeProps) => {
   const { setIframeRef, setIframeReady, showIframeScreen } = useDfnsConnect();
 
+  const [isInitialScreenRequested, setIsInitialScreenRequested] =
+    useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const intervalId = useRef<number>(0);
   const isMessageReplied = useRef<boolean>(false);
@@ -66,12 +68,14 @@ export const DfnsIframe = ({
   }, [onReady, initialScreen, setIframeReady]);
 
   const setIframeInitialScreen = useCallback(async () => {
+    if (isInitialScreenRequested) return;
     const iframe: HTMLIFrameElement | null = iframeRef.current;
     if (!iframe || !isIframeReady) return;
     const showScreen = initialScreen
       ? initialScreen
       : IframeActiveState.default;
     await showIframeScreen({ showScreen });
+    setIsInitialScreenRequested(true);
   }, [initialScreen, isIframeReady, showIframeScreen]);
 
   useEffect(() => {
