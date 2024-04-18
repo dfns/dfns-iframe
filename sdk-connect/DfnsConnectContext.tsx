@@ -9,13 +9,15 @@ import {
   LoginWithTokenProps,
   CreateWalletProps,
   MessageParentActionPayload,
+  TransactionPayload,
 } from ".";
-
+import { GenerateSignatureResponse } from "@dfns/sdk/generated/wallets";
 export interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   isConnectReady: boolean;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
+  signedTransaction: GenerateSignatureResponse;
   setIframeRef: (iframe: HTMLIFrameElement) => void;
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;
@@ -34,6 +36,7 @@ export interface DfnsContextType {
     networkId,
     showScreen,
   }: CreateWalletProps) => void;
+  signTransaction: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
 }
 

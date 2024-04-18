@@ -8,6 +8,11 @@ import {
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
+import {
+  Eip712TypedData,
+  Eip712TypedDataDomain,
+} from "@dfns/sdk/codegen/datamodel/PublicKeys";
+import { TransactionLike } from "ethers";
 
 export enum IframeActiveState {
   default = "default",
@@ -18,8 +23,8 @@ export enum IframeActiveState {
   credentialsList = "credentialsList",
   parentErrorMessage = "parentErrorMessage",
   userWallet = "userWallet",
+  waiting = "waiting",
 }
-
 export enum MessageActions {
   iframeReady = "iframeReady",
   login = "login",
@@ -31,8 +36,8 @@ export enum MessageActions {
   listUserCredentials = "listUserCredentials",
   userWalletExists = "userWalletExists",
   createAdditionalCredential = "createAdditionalCredential",
-
   signWalletTransaction = "signWalletTransaction",
+
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
   updateIframeScreenState = "updateIframeScreenState",
@@ -48,6 +53,7 @@ export enum MessageActionsResponses {
   createWalletSuccess = "createWalletSuccess",
   listUserCredentialsSuccess = "listUserCredentialsSuccess",
   createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
+  signWalletTransactionSuccess = "signWalletTransactionSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -78,7 +84,6 @@ export type MessageResponsePayload = {
   onLogoutShow?: IframeActiveState;
   userWalletExists?: boolean;
 };
-
 export type MessagePayload = {
   action: MessageActions;
   IframeActiveState?: IframeActiveState;
@@ -89,37 +94,35 @@ export type MessagePayload = {
   walletName?: string;
   networkId?: BlockchainNetwork;
 };
-
 export enum MessageParentActions {
   initUserRegister = "initUserRegister",
   login = "login",
   handleError = "handleError",
+  handleSignedTransaction = "handleSignedTransaction",
 
-  completeUserRegister = "completeUserRegister",
-  userLoginSuccess = "userLoginSuccess",
-  userLogoutSuccess = "userLogoutSuccess",
-  userLoginWithTokenComplete = "userLoginWithTokenComplete",
-  isWalletExists = "isWalletExists",
-  error = "error",
+  // completeUserRegister = "completeUserRegister",
+  // userLoginSuccess = "userLoginSuccess",
+  // userLogoutSuccess = "userLogoutSuccess",
+  // userLoginWithTokenComplete = "userLoginWithTokenComplete",
+  // isWalletExists = "isWalletExists",
+  // error = "error",
 }
-
 export type MessageParentActionPayload = {
   showScreen?: IframeActiveState;
 };
-
 export enum MessageParentActionsResponses {
   initUserRegisterSuccess = "initUserRegisterSuccess",
   loginSuccess = "loginSuccess",
   handleErrorSuccess = "handleErrorSuccess",
+  handleSignedTransactionSuccess = "handleSignedTransactionSuccess",
 
-  completeUserRegisterSuccess = "completeUserRegisterSuccess",
-  userLoginSuccess = "userLoginSuccess",
-  userLogoutSuccess = "userLogoutSuccess",
-  userLoginWithTokenCompleteSuccess = "userLoginWithTokenCompleteSuccess",
-  isWalletExistsSuccess = "isWalletExistsSuccess",
-  error = "errorSuccess",
+  // completeUserRegisterSuccess = "completeUserRegisterSuccess",
+  // userLoginSuccess = "userLoginSuccess",
+  // userLogoutSuccess = "userLogoutSuccess",
+  // userLoginWithTokenCompleteSuccess = "userLoginWithTokenCompleteSuccess",
+  // isWalletExistsSuccess = "isWalletExistsSuccess",
+  // error = "errorSuccess",
 }
-
 export type ChangeIframeScreenProps = {
   showScreen: IframeActiveState;
 };
@@ -145,3 +148,47 @@ export type CreateWalletProps = {
   networkId: BlockchainNetwork;
   showScreen?: IframeActiveState;
 };
+
+interface ITypedDataField {
+  name: string;
+  type: string;
+}
+interface ITypeMap {
+  [key: string]: ITypedDataField[];
+}
+interface IPerson {
+  name: string;
+  wallet: string;
+}
+interface IMail {
+  from: IPerson;
+  to: IPerson;
+  contents: string;
+}
+interface IDomain {
+  name: string;
+  version: string;
+  chainId: number;
+  verifyingContract: string;
+  salt: string;
+}
+interface IEIP712TypedData {
+  kind: string;
+  types: ITypeMap;
+  domain: IDomain;
+  message: IMail;
+}
+export interface TransactionPayload extends IEIP712TypedData {
+  kind: "Eip712";
+  message: {
+    from: {
+      name: string;
+      wallet: string;
+    };
+    to: {
+      name: string;
+      wallet: string;
+    };
+    contents: string;
+  };
+}

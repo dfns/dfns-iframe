@@ -3,7 +3,6 @@ import { useContext, useEffect } from "react";
 import DfnsConnectContext from "./DfnsConnectContext";
 import { MessageParentActionPayload, MessageParentActions } from ".";
 
-
 export const useDfnsConnect = (
   onParentAction?: (
     parentAction: MessageParentActions,
@@ -26,6 +25,7 @@ export const useDfnsConnect = (
   }, [
     context?.requiredActionName,
     context?.requiredActionPayload,
+    context?.signedTransaction,
     onParentAction,
   ]);
 
