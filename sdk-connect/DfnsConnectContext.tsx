@@ -11,12 +11,13 @@ import {
   MessageParentActionPayload,
   TransactionPayload,
 } from ".";
+import { GenerateSignatureResponse } from "@dfns/sdk/generated/wallets";
 export interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   isConnectReady: boolean;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
-  signedTransaction: any;
+  signedTransaction: GenerateSignatureResponse;
   setIframeRef: (iframe: HTMLIFrameElement) => void;
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;

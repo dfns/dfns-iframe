@@ -12,7 +12,7 @@ import { useServerRequests } from "@/app/hooks/useServerRequests";
 import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
 export default function Home() {
-  const [userName, setUserName] = useState("rod+grvt917@dfns.co");
+  const [userName, setUserName] = useState("");
 
   async function onParentAction(
     parentAction: MessageParentActions,
