@@ -26,7 +26,8 @@ export default function Home() {
         console.log("handleSignedTransaction", payload);
         return;
       case MessageParentActions.login:
-        const showScreen = payload?.showScreen || IframeActiveState.default;
+        const showScreen =
+          payload?.showScreen || IframeActiveState.createUserAndWallet;
         await login({
           userName,
           showScreen,
@@ -178,7 +179,7 @@ export default function Home() {
         Sign transaction
       </button>
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
-      <div className="border-8 border-sky-500 w-[420px]">
+      <div className="border-8 border-sky-500 w-[505px]">
         <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
       </div>
     </main>
