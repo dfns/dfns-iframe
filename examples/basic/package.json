@@ -9,7 +9,8 @@
     "devs": "next dev -p 3001 --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "cd ../../ && npm install"
   },
   "dependencies": {
     "@dfns/sdk-connect": "file:../../",
