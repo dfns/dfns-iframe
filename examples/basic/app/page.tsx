@@ -51,7 +51,6 @@ export default function Home() {
   const {
     getRegisterInitChallenge,
     getRestartRegisterInitChallenge,
-    addPermissionsToNewUser,
     delegatedLoginNewUser,
   } = useServerRequests();
 
@@ -62,8 +61,6 @@ export default function Home() {
         userName,
         challenge,
       });
-      const user = response.user;
-      await addPermissionsToNewUser(user);
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
         token,

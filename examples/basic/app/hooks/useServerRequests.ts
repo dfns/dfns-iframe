@@ -47,23 +47,6 @@ export const useServerRequests = () => {
     }
   };
 
-  const addPermissionsToNewUser = async (user: any) => {
-    try {
-      if (!user) {
-        throw new Error("user not set");
-      }
-      const response = await fetch("/api/permissions", {
-        method: "POST",
-        body: JSON.stringify({
-          user,
-        }),
-      });
-
-      return response;
-    } catch (e) {
-      throw e;
-    }
-  };
 
   const delegatedLoginNewUser = async (userName: string) => {
     try {
@@ -86,7 +69,6 @@ export const useServerRequests = () => {
   return {
     getRegisterInitChallenge,
     getRestartRegisterInitChallenge,
-    addPermissionsToNewUser,
     delegatedLoginNewUser,
   };
 };
