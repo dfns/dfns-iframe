@@ -8,11 +8,6 @@ import {
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
-import {
-  Eip712TypedData,
-  Eip712TypedDataDomain,
-} from "@dfns/sdk/codegen/datamodel/PublicKeys";
-import { TransactionLike } from "ethers";
 
 export enum IframeActiveState {
   default = "default",
@@ -101,13 +96,6 @@ export enum MessageParentActions {
   login = "login",
   handleError = "handleError",
   handleSignedTransaction = "handleSignedTransaction",
-
-  // completeUserRegister = "completeUserRegister",
-  // userLoginSuccess = "userLoginSuccess",
-  // userLogoutSuccess = "userLogoutSuccess",
-  // userLoginWithTokenComplete = "userLoginWithTokenComplete",
-  // isWalletExists = "isWalletExists",
-  // error = "error",
 }
 export type MessageParentActionPayload = {
   showScreen?: IframeActiveState;
@@ -117,13 +105,6 @@ export enum MessageParentActionsResponses {
   loginSuccess = "loginSuccess",
   handleErrorSuccess = "handleErrorSuccess",
   handleSignedTransactionSuccess = "handleSignedTransactionSuccess",
-
-  // completeUserRegisterSuccess = "completeUserRegisterSuccess",
-  // userLoginSuccess = "userLoginSuccess",
-  // userLogoutSuccess = "userLogoutSuccess",
-  // userLoginWithTokenCompleteSuccess = "userLoginWithTokenCompleteSuccess",
-  // isWalletExistsSuccess = "isWalletExistsSuccess",
-  // error = "errorSuccess",
 }
 export type ChangeIframeScreenProps = {
   showScreen: IframeActiveState;
