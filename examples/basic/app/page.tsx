@@ -9,7 +9,6 @@ import {
   MessageParentActions,
 } from "@dfns/sdk-connect/sdk-connect";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
-import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
 export default function Home() {
   const [userName, setUserName] = useState("");
@@ -28,10 +27,7 @@ export default function Home() {
       case MessageParentActions.login:
         const showScreen =
           payload?.showScreen || IframeActiveState.createUserAndWallet;
-        await login({
-          userName,
-          showScreen,
-        });
+        await login({ userName, showScreen });
         return;
       default:
         return;
@@ -41,11 +37,11 @@ export default function Home() {
     isConnectReady,
     login,
     logout,
-    signRegisterUserInit,
     loginUserWithToken,
-    createWallet,
     signTransaction,
     showUserCredentials,
+    showIframeScreen,
+    createUserAndWallet,
   } = useDfnsConnect(onParentAction);
 
   const {
@@ -57,21 +53,17 @@ export default function Home() {
   async function createUserWithWallet() {
     try {
       const challenge = await getChallengeOrLogin(userName);
-      const response = await signRegisterUserInit({
-        userName,
+      await createUserAndWallet({
         challenge,
+        walletName: "Test Wallet Name",
+        network: "EthereumSepolia",
       });
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
         token,
         showScreen: IframeActiveState.waiting,
       });
-      await createWallet({
-        userName,
-        walletName: "testWallet1",
-        networkId: BlockchainNetwork.EthereumSepolia,
-        showScreen: IframeActiveState.userWallet,
-      });
+      await showIframeScreen({ showScreen: IframeActiveState.userWallet });
     } catch (e) {
       console.log("createUserWithWallet error", e);
     }
