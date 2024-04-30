@@ -37,6 +37,7 @@ export enum MessageActions {
   userWalletExists = "userWalletExists",
   createAdditionalCredential = "createAdditionalCredential",
   signWalletTransaction = "signWalletTransaction",
+  createUserAndWallet = "createUserAndWallet",
 
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
@@ -54,6 +55,7 @@ export enum MessageActionsResponses {
   listUserCredentialsSuccess = "listUserCredentialsSuccess",
   createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
   signWalletTransactionSuccess = "signWalletTransactionSuccess",
+  createUserAndWalletSuccess = "createUserAndWalletSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -138,6 +140,59 @@ export type SignRegisterUserInitProps = {
   challenge: UserRegistrationChallenge;
   showScreen?: IframeActiveState;
 };
+
+export type CreateUserAndWalletProps = {
+  network:
+    | "Algorand"
+    | "AlgorandTestnet"
+    | "ArbitrumOne"
+    | "ArbitrumSepolia"
+    | "AvalancheC"
+    | "AvalancheCFuji"
+    | "Base"
+    | "BaseSepolia"
+    | "Bitcoin"
+    | "BitcoinTestnet3"
+    | "Bsc"
+    | "BscTestnet"
+    | "Ethereum"
+    | "EthereumGoerli"
+    | "EthereumSepolia"
+    | "FantomOpera"
+    | "FantomTestnet"
+    | "Litecoin"
+    | "LitecoinTestnet"
+    | "Optimism"
+    | "OptimismSepolia"
+    | "Polygon"
+    | "PolygonAmoy"
+    | "PolygonMumbai"
+    | "Tron"
+    | "TronNile"
+    | "ArbitrumGoerli"
+    | "BaseGoerli"
+    | "Cardano"
+    | "CardanoPreprod"
+    | "Kusama"
+    | "OptimismGoerli"
+    | "Polkadot"
+    | "Westend"
+    | "Solana"
+    | "SolanaDevnet"
+    | "Stellar"
+    | "StellarTestnet"
+    | "Tezos"
+    | "TezosGhostnet"
+    | "XrpLedger"
+    | "XrpLedgerTestnet"
+    | "KeyEdDSA"
+    | "KeyECDSA"
+    | "KeyECDSAStark";
+  walletName: string;
+  challenge: UserRegistrationChallenge;
+  showScreen?: IframeActiveState;
+};
+
 export type LoginWithTokenProps = {
   token: string;
   showScreen?: IframeActiveState;

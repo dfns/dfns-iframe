@@ -18,6 +18,7 @@ import {
   MessageParentActions,
   MessageParentActionsResponses,
   SignRegisterUserInitProps,
+  CreateUserAndWalletProps,
   TransactionPayload,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
@@ -151,6 +152,26 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     }
   }
 
+  async function _createUserAndWallet({
+    challenge,
+    walletName,
+    network,
+    showScreen,
+  }: CreateUserAndWalletProps) {
+    try {
+      return await _sendMessageToIframe({
+        action: MessageActions.createUserAndWallet,
+        actionResponse: MessageActionsResponses.createUserAndWalletSuccess,
+        challenge,
+        walletName,
+        network,
+        showScreen,
+      });
+    } catch (e) {
+      console.error("error logging out");
+    }
+  }
+
   async function _showUserCredentials() {
     await _sendMessageToIframe({
       action: MessageActions.listUserCredentials,
@@ -227,6 +248,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
   const signTransaction = requireIframeReady(_signTransaction);
   const showIframeScreen = requireIframeReady(_showIframeScreen);
   const showUserCredentials = requireIframeReady(_showUserCredentials);
+  const createUserAndWallet = requireIframeReady(_createUserAndWallet);
 
   const value = useMemo(
     () => ({
@@ -244,6 +266,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       createWallet,
       signTransaction,
       showIframeScreen,
+      createUserAndWallet,
     }),
     [
       isConnectReady,

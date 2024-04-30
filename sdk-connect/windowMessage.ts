@@ -45,6 +45,7 @@ export interface CreateWalletPayload {
   userName?: string;
   walletName?: string;
   networkId?: BlockchainNetwork;
+  network?: string;
   showScreen?: IframeActiveState;
   transactionPayload?: TransactionPayload;
 }
