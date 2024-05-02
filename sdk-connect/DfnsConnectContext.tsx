@@ -40,8 +40,7 @@ export interface DfnsContextType {
   signTransaction: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
   createUserAndWallet: ({
-    network,
-    walletName,
+    wallets,
     challenge,
     showScreen,
   }: CreateUserAndWalletProps) => Promise<UserRegistrationResponse>;

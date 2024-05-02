@@ -154,8 +154,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
 
   async function _createUserAndWallet({
     challenge,
-    walletName,
-    network,
+    wallets,
     showScreen,
   }: CreateUserAndWalletProps) {
     try {
@@ -163,8 +162,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
         action: MessageActions.createUserAndWallet,
         actionResponse: MessageActionsResponses.createUserAndWalletSuccess,
         challenge,
-        walletName,
-        network,
+        wallets,
         showScreen,
       });
     } catch (e) {
