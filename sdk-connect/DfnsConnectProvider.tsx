@@ -148,7 +148,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
         showScreen,
       });
     } catch (e) {
-      console.error("error logging out");
+      console.error("error creating wallet");
     }
   }
 
@@ -168,7 +168,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
         showScreen,
       });
     } catch (e) {
-      console.error("error logging out");
+      console.error("error creating user and wallet");
     }
   }
 
