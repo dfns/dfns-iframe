@@ -7,6 +7,7 @@ import {
   IframeActiveState,
   MessageParentActionPayload,
   MessageParentActions,
+  Wallet,
 } from "@dfns/sdk-connect/sdk-connect";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 
@@ -53,10 +54,13 @@ export default function Home() {
   async function createUserWithWallet() {
     try {
       const challenge = await getChallengeOrLogin(userName);
+      const newWallet: Wallet = {
+        name: "Test Wallet Name",
+        network: "EthereumSepolia",
+      };
       await createUserAndWallet({
         challenge,
-        walletName: "Test Wallet Name",
-        network: "EthereumSepolia",
+        wallets: [newWallet],
       });
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
