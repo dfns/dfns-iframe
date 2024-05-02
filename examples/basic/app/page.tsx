@@ -52,6 +52,7 @@ export default function Home() {
   } = useServerRequests();
 
   async function createUserWithWallet() {
+    if (!userName) throw new Error("userName is not set");
     try {
       const challenge = await getChallengeOrLogin(userName);
       const newWallet: Wallet = {
@@ -69,7 +70,7 @@ export default function Home() {
       });
       await showIframeScreen({ showScreen: IframeActiveState.userWallet });
     } catch (e) {
-      console.log("createUserWithWallet error", e);
+      console.error(e);
     }
   }
 
@@ -91,6 +92,8 @@ export default function Home() {
             throw e;
           }
         }
+      } else {
+        throw e;
       }
     }
   }
