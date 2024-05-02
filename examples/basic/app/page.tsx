@@ -76,14 +76,12 @@ export default function Home() {
 
   async function getChallengeOrLogin(username: string) {
     try {
-      const challenge = await getRegisterInitChallenge(userName);
-      return challenge;
+      return await getRegisterInitChallenge(userName);
     } catch (e) {
       const error = e as Error;
       if (error.message === "User already exists.") {
         try {
-          const challenge = await getRestartRegisterInitChallenge(username);
-          return challenge;
+          return await getRestartRegisterInitChallenge(username);
         } catch (e) {
           try {
             await login({ userName, showScreen: IframeActiveState.userWallet });
