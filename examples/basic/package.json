@@ -13,10 +13,10 @@
     "postinstall": "cd ../../ && npm install"
   },
   "dependencies": {
-    "@dfns/sdk-connect": "file:../../",
     "@dfns/datamodel": "^5.63.4",
-    "@dfns/sdk": "^0.4.2-alpha.1",
-    "@dfns/sdk-keysigner": "^0.4.2-alpha.1",
+    "@dfns/sdk": "^0.4.3-alpha.1",
+    "@dfns/sdk-connect": "file:../../",
+    "@dfns/sdk-keysigner": "^0.4.3-alpha.1",
     "ethers": "^6.11.1",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",

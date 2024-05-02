@@ -7,6 +7,7 @@ import {
   MessageParentActionsResponses,
   IframeActiveState,
   TransactionPayload,
+  Wallet,
 } from ".";
 const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
@@ -44,7 +45,9 @@ export interface LoginWithTokenPayload {
 export interface CreateWalletPayload {
   userName?: string;
   walletName?: string;
+  wallets?: Wallet[];
   networkId?: BlockchainNetwork;
+  network?: string;
   showScreen?: IframeActiveState;
   transactionPayload?: TransactionPayload;
 }

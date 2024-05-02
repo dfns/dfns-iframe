@@ -26,7 +26,7 @@ export const DfnsIframe = ({
   isVisible = true,
   iframeUrl = DFNS_IFRAME_URL,
   iframeHeight = 600,
-  iframeWidth = 400,
+  iframeWidth = 490,
   initialScreen = IframeActiveState.default,
   onLoad,
   onReady,

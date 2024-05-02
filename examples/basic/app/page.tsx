@@ -7,9 +7,9 @@ import {
   IframeActiveState,
   MessageParentActionPayload,
   MessageParentActions,
+  Wallet,
 } from "@dfns/sdk-connect/sdk-connect";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
-import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
 
 export default function Home() {
   const [userName, setUserName] = useState("");
@@ -28,10 +28,7 @@ export default function Home() {
       case MessageParentActions.login:
         const showScreen =
           payload?.showScreen || IframeActiveState.createUserAndWallet;
-        await login({
-          userName,
-          showScreen,
-        });
+        await login({ userName, showScreen });
         return;
       default:
         return;
@@ -41,11 +38,11 @@ export default function Home() {
     isConnectReady,
     login,
     logout,
-    signRegisterUserInit,
     loginUserWithToken,
-    createWallet,
     signTransaction,
     showUserCredentials,
+    showIframeScreen,
+    createUserAndWallet,
   } = useDfnsConnect(onParentAction);
 
   const {
@@ -55,38 +52,36 @@ export default function Home() {
   } = useServerRequests();
 
   async function createUserWithWallet() {
+    if (!userName) throw new Error("userName is not set");
     try {
       const challenge = await getChallengeOrLogin(userName);
-      const response = await signRegisterUserInit({
-        userName,
+      const newWallet: Wallet = {
+        name: "Test Wallet Name",
+        network: "EthereumSepolia",
+      };
+      await createUserAndWallet({
         challenge,
+        wallets: [newWallet],
       });
       const { token } = await delegatedLoginNewUser(userName);
       await loginUserWithToken({
         token,
         showScreen: IframeActiveState.waiting,
       });
-      await createWallet({
-        userName,
-        walletName: "testWallet1",
-        networkId: BlockchainNetwork.EthereumSepolia,
-        showScreen: IframeActiveState.userWallet,
-      });
+      await showIframeScreen({ showScreen: IframeActiveState.userWallet });
     } catch (e) {
-      console.log("createUserWithWallet error", e);
+      console.error(e);
     }
   }
 
   async function getChallengeOrLogin(username: string) {
     try {
-      const challenge = await getRegisterInitChallenge(userName);
-      return challenge;
+      return await getRegisterInitChallenge(userName);
     } catch (e) {
       const error = e as Error;
       if (error.message === "User already exists.") {
         try {
-          const challenge = await getRestartRegisterInitChallenge(username);
-          return challenge;
+          return await getRestartRegisterInitChallenge(username);
         } catch (e) {
           try {
             await login({ userName, showScreen: IframeActiveState.userWallet });
@@ -95,6 +90,8 @@ export default function Home() {
             throw e;
           }
         }
+      } else {
+        throw e;
       }
     }
   }

@@ -47,7 +47,6 @@ export const useServerRequests = () => {
     }
   };
 
-
   const delegatedLoginNewUser = async (userName: string) => {
     try {
       if (!userName) {

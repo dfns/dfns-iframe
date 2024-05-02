@@ -8,11 +8,6 @@ import {
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
-import {
-  Eip712TypedData,
-  Eip712TypedDataDomain,
-} from "@dfns/sdk/codegen/datamodel/PublicKeys";
-import { TransactionLike } from "ethers";
 
 export enum IframeActiveState {
   default = "default",
@@ -37,6 +32,7 @@ export enum MessageActions {
   userWalletExists = "userWalletExists",
   createAdditionalCredential = "createAdditionalCredential",
   signWalletTransaction = "signWalletTransaction",
+  createUserAndWallet = "createUserAndWallet",
 
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
@@ -54,6 +50,7 @@ export enum MessageActionsResponses {
   listUserCredentialsSuccess = "listUserCredentialsSuccess",
   createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
   signWalletTransactionSuccess = "signWalletTransactionSuccess",
+  createUserAndWalletSuccess = "createUserAndWalletSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
@@ -99,13 +96,6 @@ export enum MessageParentActions {
   login = "login",
   handleError = "handleError",
   handleSignedTransaction = "handleSignedTransaction",
-
-  // completeUserRegister = "completeUserRegister",
-  // userLoginSuccess = "userLoginSuccess",
-  // userLogoutSuccess = "userLogoutSuccess",
-  // userLoginWithTokenComplete = "userLoginWithTokenComplete",
-  // isWalletExists = "isWalletExists",
-  // error = "error",
 }
 export type MessageParentActionPayload = {
   showScreen?: IframeActiveState;
@@ -115,13 +105,6 @@ export enum MessageParentActionsResponses {
   loginSuccess = "loginSuccess",
   handleErrorSuccess = "handleErrorSuccess",
   handleSignedTransactionSuccess = "handleSignedTransactionSuccess",
-
-  // completeUserRegisterSuccess = "completeUserRegisterSuccess",
-  // userLoginSuccess = "userLoginSuccess",
-  // userLogoutSuccess = "userLogoutSuccess",
-  // userLoginWithTokenCompleteSuccess = "userLoginWithTokenCompleteSuccess",
-  // isWalletExistsSuccess = "isWalletExistsSuccess",
-  // error = "errorSuccess",
 }
 export type ChangeIframeScreenProps = {
   showScreen: IframeActiveState;
@@ -138,6 +121,63 @@ export type SignRegisterUserInitProps = {
   challenge: UserRegistrationChallenge;
   showScreen?: IframeActiveState;
 };
+export type Networks =
+  | "Algorand"
+  | "AlgorandTestnet"
+  | "ArbitrumOne"
+  | "ArbitrumSepolia"
+  | "AvalancheC"
+  | "AvalancheCFuji"
+  | "Base"
+  | "BaseSepolia"
+  | "Bitcoin"
+  | "BitcoinTestnet3"
+  | "Bsc"
+  | "BscTestnet"
+  | "Ethereum"
+  | "EthereumGoerli"
+  | "EthereumSepolia"
+  | "FantomOpera"
+  | "FantomTestnet"
+  | "Litecoin"
+  | "LitecoinTestnet"
+  | "Optimism"
+  | "OptimismSepolia"
+  | "Polygon"
+  | "PolygonAmoy"
+  | "PolygonMumbai"
+  | "Tron"
+  | "TronNile"
+  | "ArbitrumGoerli"
+  | "BaseGoerli"
+  | "Cardano"
+  | "CardanoPreprod"
+  | "Kusama"
+  | "OptimismGoerli"
+  | "Polkadot"
+  | "Westend"
+  | "Solana"
+  | "SolanaDevnet"
+  | "Stellar"
+  | "StellarTestnet"
+  | "Tezos"
+  | "TezosGhostnet"
+  | "XrpLedger"
+  | "XrpLedgerTestnet"
+  | "KeyEdDSA"
+  | "KeyECDSA"
+  | "KeyECDSAStark";
+
+export type Wallet = {
+  network: Networks;
+  name?: string;
+};
+export type CreateUserAndWalletProps = {
+  wallets: Wallet[];
+  challenge: UserRegistrationChallenge;
+  showScreen?: IframeActiveState;
+};
+
 export type LoginWithTokenProps = {
   token: string;
   showScreen?: IframeActiveState;

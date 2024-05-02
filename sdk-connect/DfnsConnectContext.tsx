@@ -10,6 +10,7 @@ import {
   CreateWalletProps,
   MessageParentActionPayload,
   TransactionPayload,
+  CreateUserAndWalletProps,
 } from ".";
 import { GenerateSignatureResponse } from "@dfns/sdk/generated/wallets";
 export interface DfnsContextType {
@@ -38,6 +39,11 @@ export interface DfnsContextType {
   }: CreateWalletProps) => void;
   signTransaction: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
+  createUserAndWallet: ({
+    wallets,
+    challenge,
+    showScreen,
+  }: CreateUserAndWalletProps) => Promise<UserRegistrationResponse>;
 }
 
 const DfnsConnectContext = createContext<DfnsContextType | null>(null);
