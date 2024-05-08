@@ -102,7 +102,7 @@ export const DfnsIframe = ({
       isMessageReplied.current
         ? clearInterval(intervalId.current)
         : getConnectionStatus();
-    }, 1000);
+    }, 200);
   }, [isIframeLoaded, getConnectionStatus, isIframeReady]);
 
   return (
