@@ -13,6 +13,20 @@ const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
 const APP_ID = process.env.NEXT_PUBLIC_DFNS_APP_ID || "";
 const ORG_ID = process.env.NEXT_PUBLIC_DFNS_ORG_ID || "";
 
+function getTheme() {
+  try {
+    return process.env.NEXT_PUBLIC_THEME
+      ? JSON.parse(process.env.NEXT_PUBLIC_THEME)
+      : "";
+  } catch {
+    console.error(
+      "Error parsing THEME JSON, please make sure it is valid JSON"
+    );
+    return {};
+  }
+}
+const THEME = getTheme();
+
 interface EssentialPayload {
   action?: MessageActions;
   actionResponse?: MessageActionsResponses;
@@ -89,7 +103,7 @@ export const sendMessageToIframe = (
     try {
       if (iframe.contentWindow) {
         iframe.contentWindow.postMessage(
-          { ...payload, appId: APP_ID, orgId: ORG_ID },
+          { ...payload, appId: APP_ID, orgId: ORG_ID, theme: THEME },
           DFNS_IFRAME_URL
         );
       }

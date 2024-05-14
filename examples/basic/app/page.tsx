@@ -52,7 +52,6 @@ export default function Home() {
   } = useServerRequests();
 
   async function createUserWithWallet() {
-    if (!userName) throw new Error("userName is not set");
     try {
       const challenge = await getChallengeOrLogin(userName);
       const newWallet: Wallet = {
@@ -126,6 +125,10 @@ export default function Home() {
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
+            if (!userName) {
+              console.error("userName is not set");
+              return;
+            }
             await login({ userName, showScreen: IframeActiveState.userWallet });
           }}
         >
@@ -172,9 +175,59 @@ export default function Home() {
       >
         Sign transaction
       </button>
+      <button
+        className="bg-black text-white p-4 rounded-lg m-2"
+        onClick={() => {
+          signTransaction({
+            domain: {
+              name: "GRVTEx",
+              version: "0",
+              chainId: 1,
+            },
+            types: {
+              EIP712Domain: [
+                {
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  name: "version",
+                  type: "string",
+                },
+                {
+                  name: "chainId",
+                  type: "uint256",
+                },
+              ],
+              CreateAccount: [
+                {
+                  name: "accountID",
+                  type: "address",
+                },
+                {
+                  name: "nonce",
+                  type: "uint32",
+                },
+              ],
+            },
+            message: {
+              // @ts-expect-error diverges from IEIP712TypedData
+              accountID: "0xf6e6a0d1ebb8d19b432a1680f6c3bbee8fb2d6fe",
+              nonce: "1781961150",
+            },
+            kind: "Eip712",
+          });
+        }}
+      >
+        Sign transaction 2
+      </button>
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
-      <div className="border-8 border-sky-500 w-[505px]">
-        <DfnsIframe initialScreen={IframeActiveState.createUserAndWallet} />
+      <div className="border-8 border-sky-500 w-[905px]">
+        <DfnsIframe
+          initialScreen={IframeActiveState.createUserAndWallet}
+          iframeWidth={890}
+          iframeHeight={380}
+        />
       </div>
     </main>
   );
