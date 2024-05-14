@@ -98,6 +98,17 @@ export default function Home() {
   return (
     <main className=" min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-col ">
       <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
+
+      <button
+        className="bg-black text-white p-4 rounded-lg m-2"
+        onClick={async () => {
+          await showIframeScreen({
+            showScreen: IframeActiveState.recoveryCodes,
+          });
+        }}
+      >
+        Show Recover Codes
+      </button>
       <button
         className="bg-black text-white p-4 rounded-lg m-2"
         onClick={async () => {
@@ -222,11 +233,11 @@ export default function Home() {
         Sign transaction 2
       </button>
       <h3 className="mt-16 mb-2">Dfns Iframe</h3>
-      <div className="border-8 border-sky-500 w-[905px]">
+      <div className="border-8 border-sky-500 w-[505px]">
         <DfnsIframe
           initialScreen={IframeActiveState.createUserAndWallet}
-          iframeWidth={890}
-          iframeHeight={380}
+          iframeWidth={490}
+          iframeHeight={480}
         />
       </div>
     </main>
