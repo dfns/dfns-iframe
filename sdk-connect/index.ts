@@ -209,8 +209,8 @@ interface IDomain {
   name: string;
   version: string;
   chainId: number;
-  verifyingContract: string;
-  salt: string;
+  verifyingContract?: string;
+  salt?: string;
 }
 interface IEIP712TypedData {
   kind: string;
