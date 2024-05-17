@@ -14,6 +14,7 @@ import {
   LoginWithTokenProps,
   MessageActions,
   MessageActionsResponses,
+  ErrorParentPayload,
   MessageParentActionPayload,
   MessageParentActions,
   MessageParentActionsResponses,
@@ -34,6 +35,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     useState<MessageParentActions>();
   const [requiredActionPayload, setRequiredActionPayload] =
     useState<MessageParentActionPayload>();
+  const [errorPayload, setErrorPayload] = useState<ErrorParentPayload | null>();
 
   const iframe: HTMLIFrameElement | null = iframeRef?.current
     ? iframeRef.current
@@ -229,6 +231,14 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       const showScreen = event?.data?.showScreen || "";
       setRequiredActionName(parentAction);
       setRequiredActionPayload(showScreen);
+      setErrorPayload(
+        event?.data?.errorMessage && event?.data?.errorObject
+          ? {
+              message: event?.data?.errorMessage || "",
+              error: event?.data?.errorObject || "",
+            }
+          : null
+      );
       const signedTransaction = event?.data?.signedTransaction;
       setRequiredActionPayload(signedTransaction);
     };
@@ -254,6 +264,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
+      errorPayload,
       setIframeRef,
       setIframeReady,
       login,

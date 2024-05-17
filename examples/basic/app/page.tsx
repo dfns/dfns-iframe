@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DfnsIframe } from "@dfns/sdk-connect/sdk-connect/DfnsIframe";
 import useDfnsConnect from "@dfns/sdk-connect/sdk-connect/useDfnsConnect";
 import {
@@ -20,6 +20,12 @@ export default function Home() {
   ) {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
+        if (!userName) {
+          showIframeScreen({
+            showScreen: IframeActiveState.createUserAndWallet,
+          });
+          return;
+        }
         await createUserWithWallet();
         return;
       case MessageParentActions.handleSignedTransaction:
@@ -43,6 +49,7 @@ export default function Home() {
     showUserCredentials,
     showIframeScreen,
     createUserAndWallet,
+    errorPayload,
   } = useDfnsConnect(onParentAction);
 
   const {
@@ -94,6 +101,11 @@ export default function Home() {
       }
     }
   }
+
+  useEffect(() => {
+    if (!errorPayload) return;
+    console.log({ errorPayload });
+  }, [errorPayload]);
 
   return (
     <main className=" min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-col ">

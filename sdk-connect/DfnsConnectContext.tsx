@@ -11,6 +11,7 @@ import {
   MessageParentActionPayload,
   TransactionPayload,
   CreateUserAndWalletProps,
+  ErrorParentPayload,
 } from ".";
 import { GenerateSignatureResponse } from "@dfns/sdk/generated/wallets";
 export interface DfnsContextType {
@@ -19,6 +20,7 @@ export interface DfnsContextType {
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
   signedTransaction: GenerateSignatureResponse;
+  errorPayload: ErrorParentPayload;
   setIframeRef: (iframe: HTMLIFrameElement) => void;
   setIframeReady: () => void;
   changeIframeScreen: ({ showScreen }: ChangeIframeScreenProps) => void;

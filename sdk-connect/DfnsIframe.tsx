@@ -32,7 +32,6 @@ export const DfnsIframe = ({
   onReady,
 }: DfnsIframeProps) => {
   const { setIframeRef, setIframeReady, showIframeScreen } = useDfnsConnect();
-
   const [isInitialScreenRequested, setIsInitialScreenRequested] =
     useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);

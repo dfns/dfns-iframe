@@ -19,6 +19,9 @@ export enum IframeActiveState {
   parentErrorMessage = "parentErrorMessage",
   userWallet = "userWallet",
   waiting = "waiting",
+  webauthnWaiting = "webauthnWaiting",
+  createPasskeyWaiting = "createPasskeyWaiting",
+  transactionWaiting = "transactionWaiting",
 }
 export enum MessageActions {
   iframeReady = "iframeReady",
@@ -62,6 +65,7 @@ export type MessageResponsePayload = {
   action?: MessageActionsResponses;
   parentAction?: MessageParentActionsResponses;
   userAuthToken?: string;
+  error?: Error;
   errorMessage?: string;
   signedRegisterInitChallenge?: UserRegistrationResponse;
   userLoginResponse?: {
@@ -90,6 +94,8 @@ export type MessagePayload = {
   challenge?: UserRegistrationChallenge;
   walletName?: string;
   networkId?: BlockchainNetwork;
+  error?: Error;
+  errorMessage?: String;
 };
 export enum MessageParentActions {
   initUserRegister = "initUserRegister",
@@ -97,6 +103,10 @@ export enum MessageParentActions {
   handleError = "handleError",
   handleSignedTransaction = "handleSignedTransaction",
 }
+export type ErrorParentPayload = {
+  message?: String;
+  error?: Error;
+};
 export type MessageParentActionPayload = {
   showScreen?: IframeActiveState;
 };
