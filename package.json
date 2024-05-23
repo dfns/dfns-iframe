@@ -5,7 +5,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dfns/iframe"
+    "url": "git+https://github.com/dfns/dfns-iframe/"
   },
   "scripts": {
     "build": "tsc"
