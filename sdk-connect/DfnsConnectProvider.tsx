@@ -31,6 +31,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isIframeReady, setIsIframeReady] = useState(false);
 
+  const [requiredActionId, setRequiredActionId] = useState<string>();
   const [requiredActionName, setRequiredActionName] =
     useState<MessageParentActions>();
   const [requiredActionPayload, setRequiredActionPayload] =
@@ -224,6 +225,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       ) {
         return;
       }
+      console.log("reply to iframe", `${parentAction}Success`);
       _sendMessageToIframe({
         parentActionResponse:
           `${parentAction}Success` as MessageParentActionsResponses,
@@ -231,6 +233,8 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       const showScreen = event?.data?.showScreen || "";
       setRequiredActionName(parentAction);
       setRequiredActionPayload(showScreen);
+      const randomString = Math.random().toString(36).substring(2, 12);
+      setRequiredActionId(randomString);
       setErrorPayload(
         event?.data?.errorMessage && event?.data?.errorObject
           ? {
@@ -264,6 +268,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
+      requiredActionId,
       errorPayload,
       setIframeRef,
       setIframeReady,
