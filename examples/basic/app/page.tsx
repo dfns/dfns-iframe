@@ -21,9 +21,6 @@ export default function Home() {
     switch (parentAction) {
       case MessageParentActions.initUserRegister:
         if (!userName) {
-          console.log(
-            "parent tells iframe to show createUserAndWallet username not set"
-          );
           await showIframeScreen({
             showScreen: IframeActiveState.createUserAndWallet,
           });

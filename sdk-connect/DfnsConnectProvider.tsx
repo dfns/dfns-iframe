@@ -225,7 +225,6 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       ) {
         return;
       }
-      console.log("reply to iframe", `${parentAction}Success`);
       _sendMessageToIframe({
         parentActionResponse:
           `${parentAction}Success` as MessageParentActionsResponses,
