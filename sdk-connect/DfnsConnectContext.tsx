@@ -40,7 +40,7 @@ export interface DfnsContextType {
     networkId,
     showScreen,
   }: CreateWalletProps) => void;
-  signTransaction: (transactionPayload: TransactionPayload) => void;
+  signEip712: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
   createUserAndWallet: ({
     wallets,

@@ -180,7 +180,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     });
   }
 
-  async function _signTransaction(transactionPayload: TransactionPayload) {
+  async function _signEip712(transactionPayload: TransactionPayload) {
     return await _sendMessageToIframe({
       action: MessageActions.signWalletTransaction,
       actionResponse: MessageActionsResponses.signWalletTransactionSuccess,
@@ -256,7 +256,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
   const signRegisterUserInit = requireIframeReady(_signRegisterUserInit);
   const loginUserWithToken = requireIframeReady(_loginUserWithToken);
   const createWallet = requireIframeReady(_createWallet);
-  const signTransaction = requireIframeReady(_signTransaction);
+  const signEip712 = requireIframeReady(_signEip712);
   const showIframeScreen = requireIframeReady(_showIframeScreen);
   const showUserCredentials = requireIframeReady(_showUserCredentials);
   const createUserAndWallet = requireIframeReady(_createUserAndWallet);
@@ -277,7 +277,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       signRegisterUserInit,
       loginUserWithToken,
       createWallet,
-      signTransaction,
+      signEip712,
       showIframeScreen,
       createUserAndWallet,
     }),
