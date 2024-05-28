@@ -26,6 +26,7 @@ export const useDfnsConnect = (
     context?.requiredActionName,
     context?.requiredActionPayload,
     context?.signedTransaction,
+    context?.requiredActionId,
     onParentAction,
   ]);
 

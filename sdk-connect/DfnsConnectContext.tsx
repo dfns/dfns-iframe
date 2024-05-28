@@ -19,6 +19,7 @@ export interface DfnsContextType {
   isConnectReady: boolean;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
+  requiredActionId: string;
   signedTransaction: GenerateSignatureResponse;
   errorPayload: ErrorParentPayload;
   setIframeRef: (iframe: HTMLIFrameElement) => void;

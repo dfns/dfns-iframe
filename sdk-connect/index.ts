@@ -13,7 +13,6 @@ export enum IframeActiveState {
   default = "default",
   createUserAndWallet = "createUserAndWallet",
   signTransaction = "signTransaction",
-  recoveryCredentials = "recoveryCredentials",
   recoveryCodes = "recoveryCodes",
   credentialsList = "credentialsList",
   parentErrorMessage = "parentErrorMessage",
@@ -22,6 +21,7 @@ export enum IframeActiveState {
   webauthnWaiting = "webauthnWaiting",
   createPasskeyWaiting = "createPasskeyWaiting",
   transactionWaiting = "transactionWaiting",
+  recover = "recover",
 }
 export enum MessageActions {
   iframeReady = "iframeReady",
