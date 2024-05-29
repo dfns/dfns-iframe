@@ -188,6 +188,33 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     });
   }
 
+  async function _getIsUserLoggedin() {
+    const { isUserLoggedin } = await _sendMessageToIframe({
+      action: MessageActions.getCurrentUserInfo,
+      actionResponse: MessageActionsResponses.getCurrentUserInfoSuccess,
+    });
+    return isUserLoggedin;
+  }
+
+  async function _getUserWalletAddress() {
+    const { userWalletAddress } = await _sendMessageToIframe({
+      action: MessageActions.getCurrentUserInfo,
+      actionResponse: MessageActionsResponses.getCurrentUserInfoSuccess,
+    });
+    return userWalletAddress;
+  }
+
+  async function _getCurrentUserInfo() {
+    const { isUserLoggedin, userWalletAddress } = await _sendMessageToIframe({
+      action: MessageActions.getCurrentUserInfo,
+      actionResponse: MessageActionsResponses.getCurrentUserInfoSuccess,
+    });
+    return {
+      isUserLoggedin,
+      userWalletAddress,
+    };
+  }
+
   function requireIframeReady<T extends AnyFunction>(originalFunction: T): T {
     return function (this: any, ...args: any[]) {
       if (!iframe || !isIframeReady) {
@@ -260,6 +287,9 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
   const showIframeScreen = requireIframeReady(_showIframeScreen);
   const showUserCredentials = requireIframeReady(_showUserCredentials);
   const createUserAndWallet = requireIframeReady(_createUserAndWallet);
+  const getCurrentUserInfo = requireIframeReady(_getCurrentUserInfo);
+  const getIsUserLoggedin = requireIframeReady(_getIsUserLoggedin);
+  const getUserWalletAddress = requireIframeReady(_getUserWalletAddress);
 
   const value = useMemo(
     () => ({
@@ -280,6 +310,9 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       signEip712,
       showIframeScreen,
       createUserAndWallet,
+      getCurrentUserInfo,
+      getIsUserLoggedin,
+      getUserWalletAddress,
     }),
     [
       isConnectReady,

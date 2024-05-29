@@ -36,6 +36,7 @@ export enum MessageActions {
   createAdditionalCredential = "createAdditionalCredential",
   signWalletTransaction = "signWalletTransaction",
   createUserAndWallet = "createUserAndWallet",
+  getCurrentUserInfo = "getCurrentUserInfo",
 
   getAuthToken = "getAuthToken",
   registerInit = "registerInit",
@@ -54,6 +55,7 @@ export enum MessageActionsResponses {
   createAdditionalCredentialSuccess = "createAdditionalCredentialSuccess",
   signWalletTransactionSuccess = "signWalletTransactionSuccess",
   createUserAndWalletSuccess = "createUserAndWalletSuccess",
+  getCurrentUserInfoSuccess = "getCurrentUserInfoSuccess",
 
   authToken = "authToken",
   authenticated = "authenticated",
