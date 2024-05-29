@@ -76,6 +76,8 @@ export interface IframeMessagePayload
 export type MessageResponse = {
   actionResponse: MessageActionsResponses;
   signedRegisterInitChallenge?: UserRegistrationResponse;
+  isUserLoggedin?: boolean;
+  userWalletAddress?: string;
 };
 export const sendMessageToIframe = (
   iframe: HTMLIFrameElement,
