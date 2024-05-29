@@ -48,6 +48,9 @@ export default function Home() {
     showUserCredentials,
     showIframeScreen,
     createUserAndWallet,
+    getCurrentUserInfo,
+    getIsUserLoggedin,
+    getUserWalletAddress,
     errorPayload,
   } = useDfnsConnect(onParentAction);
 
@@ -93,6 +96,24 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Exampple: get data about current user in iframe
+    if (!isConnectReady) return;
+    const showSpecificIframeScreenIfLoggedin = async () => {
+      const isLoggedin = await getIsUserLoggedin();
+      const walletAddress = await getUserWalletAddress();
+      if (isLoggedin && !!walletAddress) {
+        showIframeScreen({ showScreen: IframeActiveState.userWallet });
+      }
+    };
+    showSpecificIframeScreenIfLoggedin();
+  }, [
+    getIsUserLoggedin,
+    getUserWalletAddress,
+    showIframeScreen,
+    isConnectReady,
+  ]);
+
+  useEffect(() => {
     if (!errorPayload) return;
     // listen for errors returned from iframe
     console.log({ errorPayload });
@@ -107,8 +128,39 @@ export default function Home() {
           iframeHeight={480}
         />
       </div>
+
       <div className="flex flex-col">
         <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
+        <div className="flex flex-row">
+          <button
+            className="bg-black text-white p-4 rounded-lg m-2"
+            onClick={async () => {
+              const userInfo = await getCurrentUserInfo();
+              console.log({ userInfo });
+            }}
+          >
+            User info
+          </button>
+          <button
+            className="bg-black text-white p-4 rounded-lg m-2"
+            onClick={async () => {
+              const isUserLoggedin = await getIsUserLoggedin();
+              console.log({ isUserLoggedin });
+            }}
+          >
+            isUserLoggedin
+          </button>
+          <button
+            className="bg-black text-white p-4 rounded-lg m-2"
+            onClick={async () => {
+              const userWalletAddres = await getUserWalletAddress();
+              console.log({ userWalletAddres });
+            }}
+          >
+            Wallet address
+          </button>
+        </div>
+
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {

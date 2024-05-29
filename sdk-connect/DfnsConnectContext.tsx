@@ -42,6 +42,9 @@ export interface DfnsContextType {
   }: CreateWalletProps) => void;
   signTransaction: (transactionPayload: TransactionPayload) => void;
   showIframeScreen: ({ showScreen }: { showScreen: IframeActiveState }) => void;
+  getCurrentUserInfo: () => { userWallets: string; isUserLoggedin: boolean };
+  getUserWalletAddress: () => { userWallets: string };
+  getIsUserLoggedin: () => { isUserLoggedin: boolean };
   createUserAndWallet: ({
     wallets,
     challenge,
