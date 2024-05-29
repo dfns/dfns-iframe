@@ -96,6 +96,24 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Exampple: get data about current user in iframe
+    if (!isConnectReady) return;
+    const showSpecificIframeScreenIfLoggedin = async () => {
+      const isLoggedin = await getIsUserLoggedin();
+      const walletAddress = await getUserWalletAddress();
+      if (isLoggedin && !!walletAddress) {
+        showIframeScreen({ showScreen: IframeActiveState.userWallet });
+      }
+    };
+    showSpecificIframeScreenIfLoggedin();
+  }, [
+    getIsUserLoggedin,
+    getUserWalletAddress,
+    showIframeScreen,
+    isConnectReady,
+  ]);
+
+  useEffect(() => {
     if (!errorPayload) return;
     // listen for errors returned from iframe
     console.log({ errorPayload });
