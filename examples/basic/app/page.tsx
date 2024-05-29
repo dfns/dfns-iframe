@@ -44,7 +44,7 @@ export default function Home() {
     isConnectReady,
     login,
     logout,
-    signTransaction,
+    signEip712,
     showUserCredentials,
     showIframeScreen,
     createUserAndWallet,
@@ -173,7 +173,7 @@ export default function Home() {
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={() => {
-            signTransaction({
+            signEip712({
               kind: "Eip712",
               types: {
                 Person: [
@@ -212,7 +212,7 @@ export default function Home() {
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={() => {
-            signTransaction({
+            signEip712({
               domain: {
                 name: "GRVTEx",
                 version: "0",
