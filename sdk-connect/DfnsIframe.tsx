@@ -40,26 +40,38 @@ export const DfnsIframe = ({
   const [isIframeLoaded, setIsIframeLoaded] = useState(false);
   const [isIframeReady, setIsIframeReady] = useState(false);
 
+  const isIframeReadyResponse = ({
+    actionResponse,
+  }: {
+    actionResponse: MessageActionsResponses;
+  }) =>
+    (actionResponse as MessageActionsResponses) ===
+    MessageActionsResponses.iframeReadySuccess;
+
   const getConnectionStatus = useCallback(async () => {
     const iframe: HTMLIFrameElement | null = iframeRef.current;
     if (!iframe) return;
+    let iFrameReadyConfirmations = 0;
+    const confirmationAttempts = 5;
+    const minConfirmations = 5;
     try {
-      const result = await sendMessageToIframe(iframe, {
-        action: MessageActions.iframeReady,
-        actionResponse: MessageActionsResponses.iframeReadySuccess,
-      });
-      const actionResponse = result.actionResponse;
-      if (
-        (actionResponse as MessageActionsResponses) ===
-        MessageActionsResponses.iframeReadySuccess
-      ) {
-        clearInterval(intervalId.current);
-        isMessageReplied.current = true;
-        setIsIframeReady(true);
-        setIframeReady();
-        if (onReady) {
-          onReady(iframe, initialScreen);
-        }
+      for (let i = 0; i < confirmationAttempts; i++) {
+        const result = await sendMessageToIframe(iframe, {
+          action: MessageActions.iframeReady,
+          actionResponse: MessageActionsResponses.iframeReadySuccess,
+        });
+        iFrameReadyConfirmations += isIframeReadyResponse(result) ? 1 : 0;
+        if (iFrameReadyConfirmations >= minConfirmations) break;
+      }
+      if (iFrameReadyConfirmations < minConfirmations) {
+        return;
+      }
+      clearInterval(intervalId.current);
+      isMessageReplied.current = true;
+      setIsIframeReady(true);
+      setIframeReady();
+      if (onReady) {
+        onReady(iframe, initialScreen);
       }
     } catch (e) {
       console.error("Error getting iframe ready status");
@@ -98,10 +110,11 @@ export const DfnsIframe = ({
     clearInterval(intervalId.current);
     if (isIframeReady) return;
     intervalId.current = window.setInterval(() => {
-      isMessageReplied.current
-        ? clearInterval(intervalId.current)
-        : getConnectionStatus();
-    }, 50);
+      if (isMessageReplied.current) {
+        clearInterval(intervalId.current);
+      }
+      getConnectionStatus();
+    }, 100);
   }, [isIframeLoaded, getConnectionStatus, isIframeReady]);
 
   return (
