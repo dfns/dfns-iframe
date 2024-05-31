@@ -78,6 +78,8 @@ export type MessageResponse = {
   signedRegisterInitChallenge?: UserRegistrationResponse;
   isUserLoggedin?: boolean;
   userWalletAddress?: string;
+  isUserCreatedSuccess?: boolean;
+  registration?: UserRegistrationResponse | undefined;
 };
 export const sendMessageToIframe = (
   iframe: HTMLIFrameElement,

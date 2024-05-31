@@ -21,6 +21,7 @@ import {
   SignRegisterUserInitProps,
   CreateUserAndWalletProps,
   TransactionPayload,
+  CreateUserAndWalletResponse,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
@@ -159,17 +160,25 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     challenge,
     wallets,
     showScreen,
-  }: CreateUserAndWalletProps) {
+  }: CreateUserAndWalletProps): Promise<
+    CreateUserAndWalletResponse | undefined
+  > {
     try {
-      return await _sendMessageToIframe({
-        action: MessageActions.createUserAndWallet,
-        actionResponse: MessageActionsResponses.createUserAndWalletSuccess,
-        challenge,
-        wallets,
-        showScreen,
-      });
+      const { userWalletAddress, isUserCreatedSuccess, registration } =
+        await _sendMessageToIframe({
+          action: MessageActions.createUserAndWallet,
+          actionResponse: MessageActionsResponses.createUserAndWalletSuccess,
+          challenge,
+          wallets,
+          showScreen,
+        });
+      return {
+        userWalletAddress,
+        isUserCreatedSuccess,
+        registration,
+      };
     } catch (e) {
-      console.error("error creating user and wallet");
+      console.error("error creating user and wallet", e);
     }
   }
 

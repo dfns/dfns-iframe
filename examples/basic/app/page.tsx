@@ -64,14 +64,15 @@ export default function Home() {
         name: "Test Wallet Name",
         network: "EthereumSepolia",
       };
-      const { userWalletAddress, isUserCreatedSuccess } =
+      const { userWalletAddress, isUserCreatedSuccess, registration } =
         await createUserAndWallet({
           challenge,
           wallets: [newWallet],
         });
-      console.log("createUserWithWallet result", {
+      console.log("createUserWithWallet results", {
         userWalletAddress,
         isUserCreatedSuccess,
+        registration,
       });
     } catch (e) {
       console.error(e);
