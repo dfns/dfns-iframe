@@ -164,7 +164,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
     CreateUserAndWalletResponse | undefined
   > {
     try {
-      const { userWalletAddress, isUserCreatedSuccess, registration } =
+      const { userWalletAddress, isUserCreatedSuccess } =
         await _sendMessageToIframe({
           action: MessageActions.createUserAndWallet,
           actionResponse: MessageActionsResponses.createUserAndWalletSuccess,
@@ -175,7 +175,6 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       return {
         userWalletAddress,
         isUserCreatedSuccess,
-        registration,
       };
     } catch (e) {
       console.error("error creating user and wallet", e);

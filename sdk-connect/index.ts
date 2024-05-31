@@ -108,7 +108,6 @@ export enum MessageParentActions {
 export type CreateUserAndWalletResponse = {
   userWalletAddress: string | undefined;
   isUserCreatedSuccess: boolean | undefined;
-  registration: UserRegistrationResponse | undefined;
 };
 export type ErrorParentPayload = {
   message?: String;

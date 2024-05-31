@@ -67,7 +67,7 @@ export default function Home() {
         name: "Test Wallet Name",
         network: "EthereumSepolia",
       };
-      const { userWalletAddress, isUserCreatedSuccess, registration } =
+      const { userWalletAddress, isUserCreatedSuccess } =
         await createUserAndWallet({
           challenge,
           wallets: [newWallet],
@@ -75,7 +75,6 @@ export default function Home() {
       console.log("createUserWithWallet results", {
         userWalletAddress,
         isUserCreatedSuccess,
-        registration,
       });
     } catch (e) {
       console.error(e);
