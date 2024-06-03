@@ -104,22 +104,16 @@ export default function Home() {
   }
 
   useEffect(() => {
-    // Example: get data about current user in iframe
-    if (!isConnectReady) return;
-    const showSpecificIframeScreenIfLoggedin = async () => {
+    const initialScreen = async () => {
       const isLoggedin = await getIsUserLoggedin();
-      const walletAddress = await getUserWalletAddress();
-      if (isLoggedin && !!walletAddress) {
+      if (isLoggedin) {
         showIframeScreen({ showScreen: IframeActiveState.userWallet });
+      } else {
+        showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
       }
     };
-    showSpecificIframeScreenIfLoggedin();
-  }, [
-    getIsUserLoggedin,
-    getUserWalletAddress,
-    showIframeScreen,
-    isConnectReady,
-  ]);
+    if (isConnectReady) initialScreen();
+  }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
 
   useEffect(() => {
     if (!errorPayload) return;
@@ -130,11 +124,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-row gap-8">
       <div className="border-8 border-sky-500 w-[505px] h-[495px]">
-        <DfnsIframe
-          initialScreen={IframeActiveState.createUserAndWallet}
-          iframeWidth={490}
-          iframeHeight={480}
-        />
+        <DfnsIframe iframeWidth={490} iframeHeight={480} />
       </div>
 
       <div className="flex flex-col">
