@@ -13,6 +13,7 @@ import { useServerRequests } from "@/app/hooks/useServerRequests";
 
 export default function Home() {
   const [userName, setUserName] = useState("");
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   // This function will listen for events
   // emmited by the iframe that might require
@@ -102,24 +103,6 @@ export default function Home() {
       }
     }
   }
-
-  useEffect(() => {
-    // Example: get data about current user in iframe
-    if (!isConnectReady) return;
-    const showSpecificIframeScreenIfLoggedin = async () => {
-      const isLoggedin = await getIsUserLoggedin();
-      const walletAddress = await getUserWalletAddress();
-      if (isLoggedin && !!walletAddress) {
-        showIframeScreen({ showScreen: IframeActiveState.userWallet });
-      }
-    };
-    showSpecificIframeScreenIfLoggedin();
-  }, [
-    getIsUserLoggedin,
-    getUserWalletAddress,
-    showIframeScreen,
-    isConnectReady,
-  ]);
 
   useEffect(() => {
     if (!errorPayload) return;
