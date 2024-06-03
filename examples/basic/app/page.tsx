@@ -14,6 +14,9 @@ import { useServerRequests } from "@/app/hooks/useServerRequests";
 export default function Home() {
   const [userName, setUserName] = useState("");
 
+  // This function will listen for events
+  // emmited by the iframe that might require
+  // custom logic in your application
   async function onParentAction(
     parentAction: MessageParentActions,
     payload?: MessageParentActionPayload
@@ -64,9 +67,14 @@ export default function Home() {
         name: "Test Wallet Name",
         network: "EthereumSepolia",
       };
-      await createUserAndWallet({
-        challenge,
-        wallets: [newWallet],
+      const { userWalletAddress, isUserCreatedSuccess } =
+        await createUserAndWallet({
+          challenge,
+          wallets: [newWallet],
+        });
+      console.log("createUserWithWallet results", {
+        userWalletAddress,
+        isUserCreatedSuccess,
       });
     } catch (e) {
       console.error(e);
@@ -96,7 +104,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    // Exampple: get data about current user in iframe
+    // Example: get data about current user in iframe
     if (!isConnectReady) return;
     const showSpecificIframeScreenIfLoggedin = async () => {
       const isLoggedin = await getIsUserLoggedin();
@@ -115,7 +123,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!errorPayload) return;
-    // listen for errors returned from iframe
+    // listen for ALL errors returned from iframe
     console.log({ errorPayload });
   }, [errorPayload]);
 
