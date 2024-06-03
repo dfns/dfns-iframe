@@ -104,6 +104,18 @@ export default function Home() {
   }
 
   useEffect(() => {
+    const initialScreen = async () => {
+      const isLoggedin = await getIsUserLoggedin();
+      if (isLoggedin) {
+        showIframeScreen({ showScreen: IframeActiveState.userWallet });
+      } else {
+        showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
+      }
+    };
+    if (isConnectReady) initialScreen();
+  }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
+
+  useEffect(() => {
     if (!errorPayload) return;
     // listen for ALL errors returned from iframe
     console.log({ errorPayload });
@@ -112,11 +124,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-row gap-8">
       <div className="border-8 border-sky-500 w-[505px] h-[495px]">
-        <DfnsIframe
-          initialScreen={IframeActiveState.createUserAndWallet}
-          iframeWidth={490}
-          iframeHeight={480}
-        />
+        <DfnsIframe iframeWidth={490} iframeHeight={480} />
       </div>
 
       <div className="flex flex-col">

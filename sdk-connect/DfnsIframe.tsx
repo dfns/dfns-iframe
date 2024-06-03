@@ -27,7 +27,7 @@ export const DfnsIframe = ({
   iframeUrl = DFNS_IFRAME_URL,
   iframeHeight = 600,
   iframeWidth = 490,
-  initialScreen = IframeActiveState.default,
+  initialScreen = IframeActiveState.createUserAndWallet,
   onLoad,
   onReady,
 }: DfnsIframeProps) => {
