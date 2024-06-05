@@ -103,17 +103,17 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    const initialScreen = async () => {
-      const isLoggedin = await getIsUserLoggedin();
-      if (isLoggedin) {
-        showIframeScreen({ showScreen: IframeActiveState.userWallet });
-      } else {
-        showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
-      }
-    };
-    if (isConnectReady) initialScreen();
-  }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
+  // useEffect(() => {
+  //   const initialScreen = async () => {
+  //     const isLoggedin = await getIsUserLoggedin();
+  //     if (isLoggedin) {
+  //       showIframeScreen({ showScreen: IframeActiveState.userWallet });
+  //     } else {
+  //       showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
+  //     }
+  //   };
+  //   if (isConnectReady) initialScreen();
+  // }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
 
   useEffect(() => {
     if (!errorPayload) return;
@@ -222,6 +222,7 @@ export default function Home() {
 
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
+          data-testid="parent-sign-transaction-btn"
           onClick={() => {
             signEip712({
               kind: "Eip712",

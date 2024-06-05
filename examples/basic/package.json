@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "cd ../../ && npm install"
+    "postinstall": "cd ../../ && npm install",
+    "e2e": "npx playwright test --headed --ui  --debug"
   },
   "dependencies": {
     "@dfns/datamodel": "^5.63.4",
@@ -28,6 +29,7 @@
     "url": "^0.11.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.44.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
