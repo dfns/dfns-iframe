@@ -1,5 +1,4 @@
 import { test, expect, Page } from "@playwright/test";
-import { checkElementExistsByTestId } from "./helpers/exist";
 
 async function setupVirtualAuthenticator(page: Page) {
   const client = await page.context().newCDPSession(page);
@@ -18,30 +17,25 @@ async function setupVirtualAuthenticator(page: Page) {
   return { client, authenticatorId: authenticator.authenticatorId };
 }
 
+const PARENT_IFRAME_URL = "http://localhost:3001";
+const IFRAME_URL = "http://localhost:3000/iframe";
+
 test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   const { client, authenticatorId } = await setupVirtualAuthenticator(page);
 
   const random = Math.random().toString(36).substring(2, 15);
   const randomValidEmail = `rod+${random}@dfns.co`;
 
-  // await page.route("**/*", (route) => {
-  //   const url = route.request().url();
-  //   if (url.includes("http://localhost:3000/iframe")) {
-  //     console.log("Intercepted iframe route:", url);
-  //   }
-  //   route.continue();
-  // });
+  await page.goto(PARENT_IFRAME_URL);
 
-  await page.goto("http://localhost:3001");
-
-  const iframe = await page.frame({ url: "http://localhost:3000/iframe" });
+  const iframe = await page.frame({ url: IFRAME_URL });
 
   if (!iframe) {
     throw new Error("Iframe not found");
   }
 
   const iframeURL = iframe.url();
-  expect(iframeURL).toBe("http://localhost:3000/iframe");
+  expect(iframeURL).toBe(IFRAME_URL);
 
   await page.getByPlaceholder("username").click();
   await page.getByPlaceholder("username").fill(randomValidEmail);
@@ -53,6 +47,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   // Wait for a credential creation request and fulfill it
   // @ts-expect-error it works...
   page.on("webauthn.create", async (data) => {
+    console.log("------------------webauthn.create called");
     const credentialCreationResponse = await client.send(
       "WebAuthn.addCredential",
       {
@@ -78,6 +73,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   // Wait for an assertion request and fulfill it
   // @ts-expect-error it works...
   page.on("webauthn.get", async (data) => {
+    console.log("------------------webauthn.get called");
     // @ts-expect-error it works...
     const assertionResponse = await client.send("WebAuthn.addAssertion", {
       authenticatorId,
@@ -97,7 +93,29 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     }
   });
 
-  await iframe.waitForURL("http://localhost:3000/iframe/recovery-codes");
+  await page.pause();
+
+  await iframe.waitForURL(`${IFRAME_URL}/recovery-codes`);
+
+  // copy recovery codes
+
+  await page.pause();
+
+  const recoveryCode = await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-code-input")
+    .getByRole("textbox")
+    .inputValue();
+
+  console.log("recoveryCode", recoveryCode);
+
+  const recoveryKey = await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-key-input")
+    .getByRole("textbox")
+    .inputValue();
+
+  console.log("recoveryKey", recoveryKey);
 
   await page
     .frameLocator("#dfnsIframe")
@@ -108,7 +126,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     .getByTestId("recovery-saved-continue-btn")
     .click();
 
-  await iframe.waitForURL("http://localhost:3000/iframe/user-wallet");
+  await iframe.waitForURL(`${IFRAME_URL}/user-wallet`);
 
   await expect(
     page.frameLocator("#dfnsIframe").getByTestId("user-wallet")
@@ -117,7 +135,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   await page.getByTestId("parent-sign-transaction-btn").click({ force: true });
 
   console.log("iframe.url()1 :", iframe.url());
-  await iframe.waitForURL("http://localhost:3000/iframe/sign-transaction");
+  await iframe.waitForURL(`${IFRAME_URL}/sign-transaction`);
   console.log("iframe.url()2:", iframe.url());
 
   await page
@@ -128,6 +146,45 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   await expect(
     page.frameLocator("#dfnsIframe").getByTestId("transaction-signed-success")
   ).toHaveCount(1);
+
+  await page.getByTestId("logout-btn").click();
+  await iframe.waitForURL(`${IFRAME_URL}/create-user-and-wallet`);
+
+  await page.getByTestId("recover-credentials-btn").click();
+
+  await iframe.waitForURL(`${IFRAME_URL}/recover`);
+
+  await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-email-input")
+    .getByRole("textbox")
+    .fill(randomValidEmail);
+
+  await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-email-btn")
+    .click();
+
+  await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-code-input")
+    .getByRole("textbox")
+    .fill(recoveryCode);
+
+  await page
+    .frameLocator("#dfnsIframe")
+    .getByTestId("recovery-key-input")
+    .getByRole("textbox")
+    .fill(recoveryKey);
+
+  // verification string needs to be retrieved from email
+  // recovery-code-input
+  // await page
+  //   .frameLocator("#dfnsIframe")
+  //   .getByTestId("recover-credentials-btn")
+  //   .click();
+
+  await page.pause();
 
   // Clean up
   await client.send("WebAuthn.removeVirtualAuthenticator", {

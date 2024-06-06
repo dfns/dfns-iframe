@@ -170,6 +170,7 @@ export default function Home() {
           Show Recover Codes
         </button>
         <button
+          data-testid="recover-credentials-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await showIframeScreen({
@@ -177,9 +178,10 @@ export default function Home() {
             });
           }}
         >
-          Recover
+          Recover Credentials
         </button>
         <button
+          data-testid="logout-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await logout({ showScreen: IframeActiveState.createUserAndWallet });
