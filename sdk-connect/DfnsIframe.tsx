@@ -5,8 +5,6 @@ import { IframeActiveState, MessageActions, MessageActionsResponses } from ".";
 import useDfnsConnect from "./useDfnsConnect";
 import { sendMessageToIframe } from "./windowMessage";
 
-// const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
-
 export interface DfnsIframeProps {
   isVisible?: boolean;
   iframeHeight?: number;

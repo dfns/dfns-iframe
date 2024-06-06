@@ -146,7 +146,16 @@ export default function Home() {
             Wallet address
           </button>
         </div>
-
+        <button
+          className="bg-black text-white p-4 rounded-lg m-2"
+          onClick={async () => {
+            await showIframeScreen({
+              showScreen: IframeActiveState.userWallet,
+            });
+          }}
+        >
+          Show User Wallet
+        </button>
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
