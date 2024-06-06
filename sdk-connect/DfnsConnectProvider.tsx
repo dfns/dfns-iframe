@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useMemo,
-  PropsWithChildren,
-} from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import {
   CreateWalletProps,
   IframeActiveState,
@@ -22,14 +16,22 @@ import {
   CreateUserAndWalletProps,
   TransactionPayload,
   CreateUserAndWalletResponse,
+  DfnsConnectConfig,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
 
-export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
+interface DfnsConnectProviderArgs {
+  config: DfnsConnectConfig;
+  children: React.ReactNode;
+}
+export const DfnsConnectProvider = ({
+  config,
   children,
-}) => {
+}: DfnsConnectProviderArgs) => {
+  console.log("DfnsConnectProvider config", { config });
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeUrl, setIframeUrl] = useState(config?.iframeUrl);
   const [isIframeReady, setIsIframeReady] = useState(false);
 
   const [requiredActionId, setRequiredActionId] = useState<string>();
@@ -239,7 +241,7 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       : null;
     if (!iframe) throw new Error("iframe is not ready to receive messages");
     try {
-      const result = await sendMessageToIframe(iframe, payload);
+      const result = await sendMessageToIframe(iframe, payload, config);
       return result;
     } catch (e) {
       console.error("_sendMessageToIframe", e);
@@ -301,6 +303,8 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
 
   const value = useMemo(
     () => ({
+      config,
+      iframeUrl,
       iframeRef,
       isConnectReady,
       requiredActionName,
@@ -323,16 +327,28 @@ export const DfnsConnectProvider: React.FC<PropsWithChildren> = ({
       getUserWalletAddress,
     }),
     [
+      config,
+      iframeUrl,
+      iframeRef,
       isConnectReady,
       requiredActionName,
       requiredActionPayload,
+      requiredActionId,
+      errorPayload,
+      setIframeRef,
+      setIframeReady,
       login,
       logout,
-      signRegisterUserInit,
       showUserCredentials,
+      signRegisterUserInit,
       loginUserWithToken,
       createWallet,
+      signEip712,
       showIframeScreen,
+      createUserAndWallet,
+      getCurrentUserInfo,
+      getIsUserLoggedin,
+      getUserWalletAddress,
     ]
   );
 
