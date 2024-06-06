@@ -104,18 +104,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const initialScreen = async () => {
-      const isLoggedin = await getIsUserLoggedin();
-      if (isLoggedin) {
-        showIframeScreen({ showScreen: IframeActiveState.userWallet });
-      } else {
-        showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
-      }
-    };
-    if (isConnectReady) initialScreen();
-  }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
-
-  useEffect(() => {
     if (!errorPayload) return;
     // listen for ALL errors returned from iframe
     console.log({ errorPayload });
@@ -170,6 +158,7 @@ export default function Home() {
           Show Recover Codes
         </button>
         <button
+          data-testid="recover-credentials-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await showIframeScreen({
@@ -177,9 +166,10 @@ export default function Home() {
             });
           }}
         >
-          Recover
+          Recover Credentials
         </button>
         <button
+          data-testid="logout-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await logout({ showScreen: IframeActiveState.createUserAndWallet });
@@ -222,6 +212,7 @@ export default function Home() {
 
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
+          data-testid="parent-sign-transaction-btn"
           onClick={() => {
             signEip712({
               kind: "Eip712",
