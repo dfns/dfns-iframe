@@ -24,10 +24,10 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   const { client, authenticatorId } = await setupVirtualAuthenticator(page);
 
   const random = Math.random().toString(36).substring(2, 15);
-  const randomValidEmail = `rod+${random}@dfns.co`;
-
+  // needs to be email that can receive verification code to complete
+  // recovery
+  const randomValidEmail = `name+${random}@domain.com`;
   await page.goto(PARENT_IFRAME_URL);
-
   const iframe = await page.frame({ url: IFRAME_URL });
 
   if (!iframe) {
@@ -44,10 +44,8 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     .getByRole("button", { name: "Continue with my device" })
     .click();
 
-  // Wait for a credential creation request and fulfill it
-  // @ts-expect-error it works...
+  // @ts-expect-error webauthn.create exists
   page.on("webauthn.create", async (data) => {
-    console.log("------------------webauthn.create called");
     const credentialCreationResponse = await client.send(
       "WebAuthn.addCredential",
       {
@@ -70,11 +68,9 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     }
   });
 
-  // Wait for an assertion request and fulfill it
-  // @ts-expect-error it works...
+  // @ts-expect-error webauthn.get exists
   page.on("webauthn.get", async (data) => {
-    console.log("------------------webauthn.get called");
-    // @ts-expect-error it works...
+    // @ts-expect-error WebAuthn.addAssertion exists
     const assertionResponse = await client.send("WebAuthn.addAssertion", {
       authenticatorId,
       credential: {
@@ -93,14 +89,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     }
   });
 
-  await page.pause();
-
   await iframe.waitForURL(`${IFRAME_URL}/recovery-codes`);
-
-  // copy recovery codes
-
-  await page.pause();
-
   const recoveryCode = await page
     .frameLocator("#dfnsIframe")
     .getByTestId("recovery-code-input")
@@ -178,12 +167,6 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
     .fill(recoveryKey);
 
   // verification string needs to be retrieved from email
-  // recovery-code-input
-  // await page
-  //   .frameLocator("#dfnsIframe")
-  //   .getByTestId("recover-credentials-btn")
-  //   .click();
-
   await page.pause();
 
   // Clean up

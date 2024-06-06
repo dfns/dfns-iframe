@@ -103,18 +103,6 @@ export default function Home() {
     }
   }
 
-  // useEffect(() => {
-  //   const initialScreen = async () => {
-  //     const isLoggedin = await getIsUserLoggedin();
-  //     if (isLoggedin) {
-  //       showIframeScreen({ showScreen: IframeActiveState.userWallet });
-  //     } else {
-  //       showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
-  //     }
-  //   };
-  //   if (isConnectReady) initialScreen();
-  // }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
-
   useEffect(() => {
     if (!errorPayload) return;
     // listen for ALL errors returned from iframe
