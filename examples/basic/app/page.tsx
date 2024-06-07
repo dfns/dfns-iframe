@@ -111,11 +111,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-row gap-8">
-      <div className="border-8 border-sky-500 w-[505px] h-[495px]">
+      <div className="border-8 border-sky-500 w-[505px] h-[495px] ">
         <DfnsIframe iframeWidth={490} iframeHeight={480} />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[400px]">
         <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
         <div className="flex flex-row">
           <button
