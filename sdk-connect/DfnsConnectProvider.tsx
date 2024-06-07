@@ -29,7 +29,6 @@ export const DfnsConnectProvider = ({
   config,
   children,
 }: DfnsConnectProviderArgs) => {
-  console.log("DfnsConnectProvider config", { config });
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeUrl, setIframeUrl] = useState(config?.iframeUrl);
   const [isIframeReady, setIsIframeReady] = useState(false);
