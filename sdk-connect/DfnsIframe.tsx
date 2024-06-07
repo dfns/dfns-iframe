@@ -5,11 +5,8 @@ import { IframeActiveState, MessageActions, MessageActionsResponses } from ".";
 import useDfnsConnect from "./useDfnsConnect";
 import { sendMessageToIframe } from "./windowMessage";
 
-const DFNS_IFRAME_URL = process.env.NEXT_PUBLIC_IFRAME_URL || "";
-
 export interface DfnsIframeProps {
   isVisible?: boolean;
-  iframeUrl?: string;
   iframeHeight?: number;
   iframeWidth?: number;
   initialScreen?: IframeActiveState;
@@ -24,14 +21,14 @@ export interface DfnsIframeProps {
 }
 export const DfnsIframe = ({
   isVisible = true,
-  iframeUrl = DFNS_IFRAME_URL,
   iframeHeight = 600,
   iframeWidth = 490,
   initialScreen = IframeActiveState.createUserAndWallet,
   onLoad,
   onReady,
 }: DfnsIframeProps) => {
-  const { setIframeRef, setIframeReady, showIframeScreen } = useDfnsConnect();
+  const { setIframeRef, setIframeReady, showIframeScreen, iframeUrl, config } =
+    useDfnsConnect();
   const [isInitialScreenRequested, setIsInitialScreenRequested] =
     useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -56,10 +53,14 @@ export const DfnsIframe = ({
     const minConfirmations = 5;
     try {
       for (let i = 0; i < confirmationAttempts; i++) {
-        const result = await sendMessageToIframe(iframe, {
-          action: MessageActions.iframeReady,
-          actionResponse: MessageActionsResponses.iframeReadySuccess,
-        });
+        const result = await sendMessageToIframe(
+          iframe,
+          {
+            action: MessageActions.iframeReady,
+            actionResponse: MessageActionsResponses.iframeReadySuccess,
+          },
+          config
+        );
         iFrameReadyConfirmations += isIframeReadyResponse(result) ? 1 : 0;
         if (iFrameReadyConfirmations >= minConfirmations) break;
       }
