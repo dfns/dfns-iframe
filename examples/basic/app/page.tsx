@@ -104,18 +104,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const initialScreen = async () => {
-      const isLoggedin = await getIsUserLoggedin();
-      if (isLoggedin) {
-        showIframeScreen({ showScreen: IframeActiveState.userWallet });
-      } else {
-        showIframeScreen({ showScreen: IframeActiveState.createUserAndWallet });
-      }
-    };
-    if (isConnectReady) initialScreen();
-  }, [isConnectReady, getIsUserLoggedin, showIframeScreen]);
-
-  useEffect(() => {
     if (!errorPayload) return;
     // listen for ALL errors returned from iframe
     console.log({ errorPayload });
@@ -123,11 +111,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-row gap-8">
-      <div className="border-8 border-sky-500 w-[505px] h-[495px]">
+      <div className="border-8 border-sky-500 w-[505px] h-[495px] ">
         <DfnsIframe iframeWidth={490} iframeHeight={480} />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[400px]">
         <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
         <div className="flex flex-row">
           <button
@@ -158,7 +146,16 @@ export default function Home() {
             Wallet address
           </button>
         </div>
-
+        <button
+          className="bg-black text-white p-4 rounded-lg m-2"
+          onClick={async () => {
+            await showIframeScreen({
+              showScreen: IframeActiveState.userWallet,
+            });
+          }}
+        >
+          Show User Wallet
+        </button>
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
@@ -170,6 +167,7 @@ export default function Home() {
           Show Recover Codes
         </button>
         <button
+          data-testid="recover-credentials-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await showIframeScreen({
@@ -177,9 +175,10 @@ export default function Home() {
             });
           }}
         >
-          Recover
+          Recover Credentials
         </button>
         <button
+          data-testid="logout-btn"
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
             await logout({ showScreen: IframeActiveState.createUserAndWallet });
@@ -222,6 +221,7 @@ export default function Home() {
 
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
+          data-testid="parent-sign-transaction-btn"
           onClick={() => {
             signEip712({
               kind: "Eip712",

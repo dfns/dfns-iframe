@@ -248,3 +248,34 @@ export interface TransactionPayload extends IEIP712TypedData {
     contents: string;
   };
 }
+
+export type DfnsConnectTheme = {
+  global: {
+    backgroundColor?: string;
+    borderColor?: string;
+    textColor?: string;
+    highlightColor?: string;
+  };
+  primaryButton: {
+    backgroundColor?: string;
+    textColor?: string;
+    borderRadiusPx?: string;
+  };
+  secondaryButton: {
+    textColor?: string;
+    backgroundColor?: string;
+    outlineColor?: string;
+  };
+  indicators: {
+    successColor?: string;
+    errorColor?: string;
+  };
+  logoImgUrl?: string;
+  logoDarkImgUrl?: string;
+};
+export type DfnsConnectConfig = {
+  iframeUrl: string;
+  appId: string;
+  orgId: string;
+  theme?: DfnsConnectTheme;
+};

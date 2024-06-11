@@ -13,10 +13,13 @@ import {
   CreateUserAndWalletProps,
   ErrorParentPayload,
   CreateUserAndWalletResponse,
+  DfnsConnectConfig,
 } from ".";
 import { GenerateSignatureResponse } from "@dfns/sdk/generated/wallets";
 export interface DfnsContextType {
+  config: DfnsConnectConfig;
   iframeRef: React.RefObject<HTMLIFrameElement>;
+  iframeUrl: string;
   isConnectReady: boolean;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
