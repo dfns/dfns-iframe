@@ -32,6 +32,7 @@ export interface DfnsContextType {
   login: ({ userName, showScreen }: LoginProps) => void;
   logout: ({ showScreen }: LogoutProps) => void;
   showUserCredentials: () => void;
+  showUserRecoveryCredentials: () => void;
   signRegisterUserInit: ({
     userName,
     challenge,
