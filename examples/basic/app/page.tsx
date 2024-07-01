@@ -49,6 +49,7 @@ export default function Home() {
     logout,
     signEip712,
     showUserCredentials,
+    showUserRecoveryCredentials,
     showIframeScreen,
     createUserAndWallet,
     getCurrentUserInfo,
@@ -117,6 +118,44 @@ export default function Home() {
 
       <div className="flex flex-col w-[400px]">
         <p>isDfnsIframeReady: {isConnectReady ? "true" : "false"}</p>
+
+        <div className="flex flex-row justify-content-top">
+          <input
+            className="p-4 m-3 flex-1 h-12"
+            value={userName}
+            onChange={(e) => {
+              setUserName(e.target.value);
+            }}
+            placeholder="username"
+          />
+
+          <button
+            className="bg-black text-white py-0 px-5 rounded-lg m-2 h-12"
+            onClick={async () => {
+              if (!userName) {
+                console.error("userName is not set");
+                return;
+              }
+              await login({
+                userName,
+                showScreen: IframeActiveState.userWallet,
+              });
+            }}
+          >
+            login
+          </button>
+        </div>
+        <button
+          data-testid="logout-btn"
+          className="bg-black text-white p-4 rounded-lg m-2"
+          onClick={async () => {
+            await logout({
+              showScreen: IframeActiveState.createUserAndWallet,
+            });
+          }}
+        >
+          logout
+        </button>
         <div className="flex flex-row">
           <button
             className="bg-black text-white p-4 rounded-lg m-2"
@@ -154,17 +193,22 @@ export default function Home() {
             });
           }}
         >
-          Show User Wallet
+          User Wallet
         </button>
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => {
-            await showIframeScreen({
-              showScreen: IframeActiveState.recoveryCodes,
-            });
+            await showUserRecoveryCredentials();
           }}
         >
-          Show Recover Codes
+          Recovery Credentials
+        </button>
+
+        <button
+          className="bg-black text-white p-4 rounded-lg m-2"
+          onClick={async () => await showUserCredentials()}
+        >
+          Non-recovery Credentials
         </button>
         <button
           data-testid="recover-credentials-btn"
@@ -175,50 +219,8 @@ export default function Home() {
             });
           }}
         >
-          Recover Credentials
+          Recover account with codes
         </button>
-        <button
-          data-testid="logout-btn"
-          className="bg-black text-white p-4 rounded-lg m-2"
-          onClick={async () => {
-            await logout({ showScreen: IframeActiveState.createUserAndWallet });
-          }}
-        >
-          logout
-        </button>
-        <button
-          className="bg-black text-white p-4 rounded-lg m-2"
-          onClick={async () => await showUserCredentials()}
-        >
-          Show Credentials
-        </button>
-        <label>
-          Username:
-          <input
-            className="p-4 m-3"
-            value={userName}
-            onChange={(e) => {
-              setUserName(e.target.value);
-            }}
-            placeholder="username"
-          />
-          <button
-            className="bg-black text-white p-4 rounded-lg m-2"
-            onClick={async () => {
-              if (!userName) {
-                console.error("userName is not set");
-                return;
-              }
-              await login({
-                userName,
-                showScreen: IframeActiveState.userWallet,
-              });
-            }}
-          >
-            login {userName}
-          </button>
-        </label>
-
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           data-testid="parent-sign-transaction-btn"
@@ -258,52 +260,6 @@ export default function Home() {
           }}
         >
           Sign transaction
-        </button>
-        <button
-          className="bg-black text-white p-4 rounded-lg m-2"
-          onClick={() => {
-            signEip712({
-              domain: {
-                name: "GRVTEx",
-                version: "0",
-                chainId: 1,
-              },
-              types: {
-                EIP712Domain: [
-                  {
-                    name: "name",
-                    type: "string",
-                  },
-                  {
-                    name: "version",
-                    type: "string",
-                  },
-                  {
-                    name: "chainId",
-                    type: "uint256",
-                  },
-                ],
-                CreateAccount: [
-                  {
-                    name: "accountID",
-                    type: "address",
-                  },
-                  {
-                    name: "nonce",
-                    type: "uint32",
-                  },
-                ],
-              },
-              message: {
-                // @ts-expect-error diverges from IEIP712TypedData
-                accountID: "0xf6e6a0d1ebb8d19b432a1680f6c3bbee8fb2d6fe",
-                nonce: "1781961150",
-              },
-              kind: "Eip712",
-            });
-          }}
-        >
-          Sign transaction 2
         </button>
       </div>
     </main>

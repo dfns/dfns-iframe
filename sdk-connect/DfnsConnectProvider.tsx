@@ -189,6 +189,14 @@ export const DfnsConnectProvider = ({
     });
   }
 
+  async function _showUserRecoveryCredentials() {
+    await _sendMessageToIframe({
+      action: MessageActions.listUserRecoveryCredentials,
+      actionResponse:
+        MessageActionsResponses.listUserRecoveryCredentialsSuccess,
+    });
+  }
+
   async function _signEip712(transactionPayload: TransactionPayload) {
     return await _sendMessageToIframe({
       action: MessageActions.signWalletTransaction,
@@ -295,6 +303,9 @@ export const DfnsConnectProvider = ({
   const signEip712 = requireIframeReady(_signEip712);
   const showIframeScreen = requireIframeReady(_showIframeScreen);
   const showUserCredentials = requireIframeReady(_showUserCredentials);
+  const showUserRecoveryCredentials = requireIframeReady(
+    _showUserRecoveryCredentials
+  );
   const createUserAndWallet = requireIframeReady(_createUserAndWallet);
   const getCurrentUserInfo = requireIframeReady(_getCurrentUserInfo);
   const getIsUserLoggedin = requireIframeReady(_getIsUserLoggedin);
@@ -315,6 +326,7 @@ export const DfnsConnectProvider = ({
       login,
       logout,
       showUserCredentials,
+      showUserRecoveryCredentials,
       signRegisterUserInit,
       loginUserWithToken,
       createWallet,
