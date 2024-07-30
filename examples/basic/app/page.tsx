@@ -11,6 +11,9 @@ import {
 } from "@dfns/sdk-connect/sdk-connect";
 import { useServerRequests } from "@/app/hooks/useServerRequests";
 
+const IFRAME_HEIGHT = 618;
+const IFRAME_WIDTH = 425;
+
 export default function Home() {
   const [userName, setUserName] = useState("");
 
@@ -112,8 +115,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#CCC] text-[black] p-4 max-w-[90hw] flex flex-row gap-8">
-      <div className="border-8 border-sky-500 w-[505px] h-[495px] ">
-        <DfnsIframe iframeWidth={490} iframeHeight={480} />
+      <div
+        className="border-8 border-sky-500"
+        style={{
+          width: `${IFRAME_WIDTH + 15}px`,
+          height: `${IFRAME_HEIGHT + 15}px`,
+        }}
+      >
+        <DfnsIframe iframeWidth={IFRAME_WIDTH} iframeHeight={IFRAME_HEIGHT} />
       </div>
 
       <div className="flex flex-col w-[400px]">
