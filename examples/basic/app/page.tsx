@@ -210,14 +210,14 @@ export default function Home() {
             await showUserRecoveryCredentials();
           }}
         >
-          Recovery Credentials
+          Backup Codes
         </button>
 
         <button
           className="bg-black text-white p-4 rounded-lg m-2"
           onClick={async () => await showUserCredentials()}
         >
-          Non-recovery Credentials
+          Security Keys (Devices)
         </button>
         <button
           data-testid="recover-credentials-btn"
