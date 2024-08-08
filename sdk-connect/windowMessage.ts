@@ -1,4 +1,4 @@
-import { BlockchainNetwork } from "@dfns/datamodel/dist/Wallets";
+
 import { UserRegistrationChallenge, UserRegistrationResponse } from "@dfns/sdk";
 import {
   MessageActions,
@@ -10,6 +10,7 @@ import {
   Wallet,
   DfnsConnectConfig,
 } from ".";
+import { TransferAssetResponse } from "@dfns/sdk/generated/wallets";
 
 interface EssentialPayload {
   action?: MessageActions;
@@ -40,6 +41,9 @@ export interface SignRegisterUserInitPayload {
 export interface LoginWithTokenPayload {
   token?: string;
 }
+
+export type BlockchainNetwork = TransferAssetResponse["network"];
+
 export interface CreateWalletPayload {
   userName?: string;
   walletName?: string;
@@ -51,11 +55,11 @@ export interface CreateWalletPayload {
 }
 export interface IframeMessagePayload
   extends EssentialPayload,
-    AlwaysOptionalPayload,
-    LoginWithTokenPayload,
-    SignRegisterUserInitPayload,
-    CreateWalletPayload,
-    LoginPayload {}
+  AlwaysOptionalPayload,
+  LoginWithTokenPayload,
+  SignRegisterUserInitPayload,
+  CreateWalletPayload,
+  LoginPayload { }
 
 export type MessageResponse = {
   actionResponse: MessageActionsResponses;
