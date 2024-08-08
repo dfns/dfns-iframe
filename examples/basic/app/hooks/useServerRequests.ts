@@ -1,4 +1,4 @@
-import { UserAuthKind } from "@dfns/sdk/codegen/datamodel/Auth";
+
 
 export const useServerRequests = () => {
   const getRegisterInitChallenge = async (userName: string) => {
@@ -10,7 +10,7 @@ export const useServerRequests = () => {
         method: "POST",
         body: JSON.stringify({
           email: userName,
-          kind: UserAuthKind.EndUser,
+          kind: 'EndUser',
         }),
       });
 
@@ -33,7 +33,7 @@ export const useServerRequests = () => {
         method: "POST",
         body: JSON.stringify({
           email: userName,
-          kind: UserAuthKind.EndUser,
+          kind: 'EndUser',
         }),
       });
 

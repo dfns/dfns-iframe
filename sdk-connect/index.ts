@@ -1,13 +1,10 @@
 import {
-  CreateWalletResponse,
-  ListWalletsResponse,
-  BlockchainNetwork,
-} from "@dfns/datamodel/dist/Wallets";
-import {
   UserRegistrationChallenge,
   UserRegistrationResponse,
   Fido2Attestation,
 } from "@dfns/sdk";
+import { BlockchainNetwork } from "./windowMessage";
+import { CreateWalletResponse, ListWalletsResponse } from "@dfns/sdk/generated/wallets";
 
 export enum IframeActiveState {
   default = "default",
