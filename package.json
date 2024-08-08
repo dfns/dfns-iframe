@@ -1,7 +1,7 @@
 {
   "name": "@dfns/sdk-connect",
   "description": "Dfns Connect SDK",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -11,8 +11,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@dfns/sdk": "^0.5.2",
-    "@dfns/sdk-keysigner": "^0.5.2",
+    "@dfns/sdk": "^0.5.5",
+    "@dfns/sdk-keysigner": "^0.5.5",
     "ethers": "^6.11.1",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
