@@ -26,7 +26,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
   const random = Math.random().toString(36).substring(2, 15);
   // needs to be email that can receive verification code to complete
   // recovery
-  const randomValidEmail = `name+${random}@domain.com`;
+  const randomValidEmail = `rod+${random}@dfns.co`;
   await page.goto(PARENT_IFRAME_URL);
   const iframe = await page.frame({ url: IFRAME_URL });
 
