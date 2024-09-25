@@ -70,7 +70,6 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
 
   // @ts-expect-error webauthn.get exists
   page.on("webauthn.get", async (data) => {
-    console.log({ data });
     // @ts-expect-error WebAuthn.addAssertion exists
     const assertionResponse = await client.send("WebAuthn.addAssertion", {
       authenticatorId,
