@@ -4,7 +4,10 @@ import {
   Fido2Attestation,
 } from "@dfns/sdk";
 import { BlockchainNetwork } from "./windowMessage";
-import { CreateWalletResponse, ListWalletsResponse } from "@dfns/sdk/generated/wallets";
+import {
+  CreateWalletResponse,
+  ListWalletsResponse,
+} from "@dfns/sdk/generated/wallets";
 
 export enum IframeActiveState {
   default = "default",

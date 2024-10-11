@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   CreateWalletProps,
   IframeActiveState,
@@ -19,6 +25,7 @@ import {
   DfnsConnectConfig,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
+import { useWebAuthn } from "./hooks/useWebauthn";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
 
 interface DfnsConnectProviderArgs {
@@ -29,6 +36,9 @@ export const DfnsConnectProvider = ({
   config,
   children,
 }: DfnsConnectProviderArgs) => {
+  const { isWebauthnSupported } = useWebAuthn();
+  const [isCrossOriginWebauthnSupported, setIsCrossOriginWebauthnSupported] =
+    useState<null | boolean>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeUrl, setIframeUrl] = useState(config?.iframeUrl);
   const [isIframeReady, setIsIframeReady] = useState(false);
@@ -256,6 +266,36 @@ export const DfnsConnectProvider = ({
     }
   }
 
+  const _getCrossOriginWebauthnSupport = useCallback(
+    () => isCrossOriginWebauthnSupported,
+    [isCrossOriginWebauthnSupported]
+  );
+  const _getWebauthnSupport = useCallback(
+    () => isWebauthnSupported,
+    [isWebauthnSupported]
+  );
+
+  const detectWebauthnError = (event: MessageEvent) => {
+    const errorMessage = event?.data?.errorObject;
+    const knownCrossOriginErrorMessages = [
+      "The following credential operations can only occur in a document which is same-origin with all of its ancestors: storage/retrieval of 'PasswordCredential' and 'FederatedCredential', storage of 'PublicKeyCredential'.",
+      "The following credential operations can only occur in a document which is same-origin with all of its ancestors: storage/retrieval of 'PasswordCredential' and 'FederatedCredential', storage of 'PublicKeyCredential'.",
+      "undefined is not an object (evaluating 'navigator.credentials.create')",
+      "undefined is not an object (evaluating 'navigator.credentials.get')",
+      "The origin of the document is not the same as its ancestors.",
+    ];
+    if (
+      !!errorMessage &&
+      knownCrossOriginErrorMessages.find(
+        (m) =>
+          m.toLocaleLowerCase().trim() ===
+          errorMessage.toLocaleLowerCase().trim()
+      )
+    ) {
+      setIsCrossOriginWebauthnSupported(false);
+    }
+  };
+
   useEffect(() => {
     if (!iframe || !isIframeReady) return;
     const handleIframeMessages = async (event: MessageEvent) => {
@@ -278,6 +318,7 @@ export const DfnsConnectProvider = ({
       setRequiredActionPayload(showScreen);
       const randomString = Math.random().toString(36).substring(2, 12);
       setRequiredActionId(randomString);
+      detectWebauthnError(event);
       setErrorPayload(
         event?.data?.errorMessage && event?.data?.errorObject
           ? {
@@ -311,12 +352,19 @@ export const DfnsConnectProvider = ({
   const getIsUserLoggedin = requireIframeReady(_getIsUserLoggedin);
   const getUserWalletAddress = requireIframeReady(_getUserWalletAddress);
 
+  const getCrossOriginWebauthnSupport = requireIframeReady(
+    _getCrossOriginWebauthnSupport
+  );
+  const getWebauthnSupport = requireIframeReady(_getWebauthnSupport);
+
   const value = useMemo(
     () => ({
       config,
       iframeUrl,
       iframeRef,
       isConnectReady,
+      isWebauthnSupported,
+      isCrossOriginWebauthnSupported,
       requiredActionName,
       requiredActionPayload,
       requiredActionId,
@@ -336,12 +384,16 @@ export const DfnsConnectProvider = ({
       getCurrentUserInfo,
       getIsUserLoggedin,
       getUserWalletAddress,
+      getCrossOriginWebauthnSupport,
+      getWebauthnSupport,
     }),
     [
       config,
       iframeUrl,
       iframeRef,
       isConnectReady,
+      isWebauthnSupported,
+      isCrossOriginWebauthnSupported,
       requiredActionName,
       requiredActionPayload,
       requiredActionId,
@@ -360,6 +412,8 @@ export const DfnsConnectProvider = ({
       getCurrentUserInfo,
       getIsUserLoggedin,
       getUserWalletAddress,
+      getCrossOriginWebauthnSupport,
+      getWebauthnSupport,
     ]
   );
 
