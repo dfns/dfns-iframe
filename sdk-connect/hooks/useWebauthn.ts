@@ -12,6 +12,26 @@ export const useWebAuthn = () => {
     isPlatformAuthenticatorAvailable,
     setIsPlatformAuthenticatorAvailable,
   ] = useState<null | boolean>(null);
+  const [isCrossOriginWebauthnSupported, setIsCrossOriginWebauthnSupported] =
+    useState<null | boolean>(null);
+
+  const detectWebauthnError = (errorMessage: string) => {
+    const knownCrossOriginErrorMessages = [
+      "The following credential operations can only occur in a document which is same-origin with all of its ancestors: storage/retrieval of 'PasswordCredential' and 'FederatedCredential', storage of 'PublicKeyCredential'.",
+      "The following credential operations can only occur in a document which is same-origin with all of its ancestors: storage/retrieval of 'PasswordCredential' and 'FederatedCredential', storage of 'PublicKeyCredential'.",
+      "undefined is not an object (evaluating 'navigator.credentials.create')",
+      "undefined is not an object (evaluating 'navigator.credentials.get')",
+      "The origin of the document is not the same as its ancestors.",
+    ];
+    if (
+      !!errorMessage &&
+      knownCrossOriginErrorMessages.find(
+        (m) => m.toLowerCase().trim() === errorMessage.toLowerCase().trim()
+      )
+    ) {
+      setIsCrossOriginWebauthnSupported(false);
+    }
+  };
 
   const getBrowserCapabilities = async () => {
     const isPublicKeyCredentialSupported =
@@ -54,7 +74,9 @@ export const useWebAuthn = () => {
   }, []);
   return {
     isWebauthnSupported,
+    isCrossOriginWebauthnSupported,
     isBrowserSupportsWebAuthnAutofill,
     isPlatformAuthenticatorAvailable,
+    detectWebauthnError,
   };
 };

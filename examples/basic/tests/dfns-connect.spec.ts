@@ -123,7 +123,7 @@ test.only("WebAuthn create passkey and sign request", async ({ page }) => {
 
   await page.getByTestId("parent-sign-transaction-btn").click({ force: true });
 
-  console.log("iframe.url() :", iframe.url());
+  console.log("iframe.url()1 :", iframe.url());
   await iframe.waitForURL(`${IFRAME_URL}/sign-transaction`);
   console.log("iframe.url()2:", iframe.url());
 

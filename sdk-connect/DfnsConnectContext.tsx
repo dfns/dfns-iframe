@@ -22,7 +22,7 @@ export interface DfnsContextType {
   iframeUrl: string;
   isConnectReady: boolean;
   isWebauthnSupported: boolean | null;
-  isCrossOriginWebauthnSupported: boolean | null;
+  isCrossOriginWebauthnSupported: false | null;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
   requiredActionId: string;
