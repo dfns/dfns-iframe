@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   CreateWalletProps,
   IframeActiveState,
@@ -19,6 +25,7 @@ import {
   DfnsConnectConfig,
 } from ".";
 import DfnsConnectContext from "./DfnsConnectContext";
+import { useWebAuthn } from "./hooks/useWebauthn";
 import { IframeMessagePayload, sendMessageToIframe } from "./windowMessage";
 
 interface DfnsConnectProviderArgs {
@@ -29,6 +36,12 @@ export const DfnsConnectProvider = ({
   config,
   children,
 }: DfnsConnectProviderArgs) => {
+  const {
+    isWebauthnSupported,
+    isCrossOriginWebauthnSupported,
+    detectWebauthnError,
+  } = useWebAuthn();
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeUrl, setIframeUrl] = useState(config?.iframeUrl);
   const [isIframeReady, setIsIframeReady] = useState(false);
@@ -256,6 +269,15 @@ export const DfnsConnectProvider = ({
     }
   }
 
+  const _getCrossOriginWebauthnSupport = useCallback(
+    () => isCrossOriginWebauthnSupported,
+    [isCrossOriginWebauthnSupported]
+  );
+  const _getWebauthnSupport = useCallback(
+    () => isWebauthnSupported,
+    [isWebauthnSupported]
+  );
+
   useEffect(() => {
     if (!iframe || !isIframeReady) return;
     const handleIframeMessages = async (event: MessageEvent) => {
@@ -278,6 +300,8 @@ export const DfnsConnectProvider = ({
       setRequiredActionPayload(showScreen);
       const randomString = Math.random().toString(36).substring(2, 12);
       setRequiredActionId(randomString);
+      if (event?.data?.errorObject)
+        detectWebauthnError(event?.data?.errorObject);
       setErrorPayload(
         event?.data?.errorMessage && event?.data?.errorObject
           ? {
@@ -311,12 +335,19 @@ export const DfnsConnectProvider = ({
   const getIsUserLoggedin = requireIframeReady(_getIsUserLoggedin);
   const getUserWalletAddress = requireIframeReady(_getUserWalletAddress);
 
+  const getCrossOriginWebauthnSupport = requireIframeReady(
+    _getCrossOriginWebauthnSupport
+  );
+  const getWebauthnSupport = requireIframeReady(_getWebauthnSupport);
+
   const value = useMemo(
     () => ({
       config,
       iframeUrl,
       iframeRef,
       isConnectReady,
+      isWebauthnSupported,
+      isCrossOriginWebauthnSupported,
       requiredActionName,
       requiredActionPayload,
       requiredActionId,
@@ -336,12 +367,16 @@ export const DfnsConnectProvider = ({
       getCurrentUserInfo,
       getIsUserLoggedin,
       getUserWalletAddress,
+      getCrossOriginWebauthnSupport,
+      getWebauthnSupport,
     }),
     [
       config,
       iframeUrl,
       iframeRef,
       isConnectReady,
+      isWebauthnSupported,
+      isCrossOriginWebauthnSupported,
       requiredActionName,
       requiredActionPayload,
       requiredActionId,
@@ -360,6 +395,8 @@ export const DfnsConnectProvider = ({
       getCurrentUserInfo,
       getIsUserLoggedin,
       getUserWalletAddress,
+      getCrossOriginWebauthnSupport,
+      getWebauthnSupport,
     ]
   );
 

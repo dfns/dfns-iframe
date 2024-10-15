@@ -47,6 +47,8 @@ export default function Home() {
     }
   }
   const {
+    isWebauthnSupported,
+    isCrossOriginWebauthnSupported,
     isConnectReady,
     login,
     logout,
@@ -58,8 +60,32 @@ export default function Home() {
     getCurrentUserInfo,
     getIsUserLoggedin,
     getUserWalletAddress,
+    getWebauthnSupport,
+    getCrossOriginWebauthnSupport,
     errorPayload,
   } = useDfnsConnect(onParentAction);
+
+  useEffect(() => {
+    console.log({ isWebauthnSupported, isCrossOriginWebauthnSupported });
+    if (!isConnectReady) return;
+    console.log("getWebauthnSupport", getWebauthnSupport());
+    /*
+    Notes:
+    getCrossOriginWebauthnSupport will return null until an attempt to create a passkey 
+    if it fails in known environment, will return false.
+    Will never return true.
+    */
+    console.log(
+      "getCrossOriginWebauthnSupport",
+      getCrossOriginWebauthnSupport()
+    );
+  }, [
+    isConnectReady,
+    isWebauthnSupported,
+    isCrossOriginWebauthnSupported,
+    getWebauthnSupport,
+    getCrossOriginWebauthnSupport,
+  ]);
 
   const { getRegisterInitChallenge, getRestartRegisterInitChallenge } =
     useServerRequests();
