@@ -21,6 +21,8 @@ export interface DfnsContextType {
   iframeRef: React.RefObject<HTMLIFrameElement>;
   iframeUrl: string;
   isConnectReady: boolean;
+  isWebauthnSupported: boolean | null;
+  isCrossOriginWebauthnSupported: false | null;
   requiredActionName: string;
   requiredActionPayload: MessageParentActionPayload;
   requiredActionId: string;
@@ -55,6 +57,8 @@ export interface DfnsContextType {
     challenge,
     showScreen,
   }: CreateUserAndWalletProps) => Promise<CreateUserAndWalletResponse>;
+  getCrossOriginWebauthnSupport: () => boolean;
+  getWebauthnSupport: () => null | false;
 }
 
 const DfnsConnectContext = createContext<DfnsContextType | null>(null);
